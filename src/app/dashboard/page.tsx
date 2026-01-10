@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { UploadZone } from '@/components/dashboard/upload-zone'
 import { DataTable } from '@/components/dashboard/data-table'
-import { BarChart3, LogOut, Plus, Database, Trash2, Home, Layout, CreditCard, Info, Sparkles } from 'lucide-react'
+import { BarChart3, LogOut, Plus, Database, Trash2, Home, Layout, CreditCard, Info, Sparkles, Download } from 'lucide-react'
 
 export default function DashboardPage() {
     const [user, setUser] = useState<any>(null)
@@ -284,7 +284,18 @@ export default function DashboardPage() {
                                             <Plus className="w-8 h-8 text-indigo-400" />
                                         </div>
                                         <h3 className="text-2xl font-bold text-white mb-2">Upload New Dataset</h3>
-                                        <p className="text-gray-400">Supported formats: CSV, Excel (xlsx, xls)</p>
+                                        <p className="text-gray-400 mb-6">Supported formats: CSV, Excel (xlsx, xls)</p>
+
+                                        <div className="flex items-center justify-center gap-4 text-sm">
+                                            <span className="text-gray-500">Don't have data? Try these:</span>
+                                            <a href="/samples/sales_performance.csv" download className="text-indigo-400 hover:text-indigo-300 hover:underline flex items-center gap-1">
+                                                Sales Data <Download className="w-3 h-3" />
+                                            </a>
+                                            <span className="text-gray-600">|</span>
+                                            <a href="/samples/marketing_metrics.csv" download className="text-indigo-400 hover:text-indigo-300 hover:underline flex items-center gap-1">
+                                                Marketing Data <Download className="w-3 h-3" />
+                                            </a>
+                                        </div>
                                     </div>
 
                                     <UploadZone onDataParsed={handleDataParsed} />

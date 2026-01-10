@@ -1,0 +1,16 @@
+Date,Product,Category,Region,Sales,Units,Profit
+2024-01-01,Laptop Pro,Electronics,North,1200,5,200
+2024-01-02,Smart Watch,Electronics,South,300,10,50
+2024-01-03,Office Chair,Furniture,West,150,8,40
+2024-01-04,Mechanical Keyboard,Electronics,North,200,12,60
+2024-01-05,Desk Lamp,Furniture,East,50,20,10
+2024-01-06,Laptop Pro,Electronics,East,1200,3,200
+2024-01-07,Gaming Monitor,Electronics,West,800,7,120
+2024-01-08,Office Chair,Furniture,North,150,15,40
+2024-01-09,Smart Watch,Electronics,East,300,12,50
+2024-01-10,Desk Lamp,Furniture,South,50,25,10
+2024-01-11,Laptop Pro,Electronics,South,1200,6,200
+2024-01-12,Gaming Monitor,Electronics,North,800,4,120
+2024-01-13,Mechanical Keyboard,Electronics,West,200,15,60
+2024-01-14,Office Chair,Furniture,East,150,10,40
+2024-01-15,Smart Watch,Electronics,North,300,8,50
