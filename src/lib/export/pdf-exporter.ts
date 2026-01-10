@@ -23,14 +23,25 @@ export async function exportToPDF(options: PDFExportOptions) {
     doc.setFillColor(99, 102, 241)
     doc.rect(0, 0, 210, 45, 'F')
 
+    // Logo circle
+    doc.setFillColor(255, 255, 255, 0.2)
+    doc.circle(25, 22, 8, 'F')
+    doc.setFillColor(255, 255, 255)
+    doc.circle(25, 22, 6, 'F')
+    doc.setFontSize(10)
+    doc.setTextColor(99, 102, 241)
+    doc.setFont('helvetica', 'bold')
+    doc.text('DG', 21, 24)
+
+    // Brand name
     doc.setTextColor(255, 255, 255)
     doc.setFontSize(28)
     doc.setFont('helvetica', 'bold')
-    doc.text('DataGenie', 20, 25)
+    doc.text('DataGenie', 38, 25)
 
     doc.setFontSize(13)
     doc.setFont('helvetica', 'normal')
-    doc.text('Comprehensive Analytics Report', 20, 35)
+    doc.text('Comprehensive Analytics Report', 38, 35)
 
     yPos = 60
 
