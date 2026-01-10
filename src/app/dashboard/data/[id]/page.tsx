@@ -8,6 +8,7 @@ import { BarChartComponent } from '@/components/dashboard/charts/bar-chart'
 import { LineChartComponent } from '@/components/dashboard/charts/line-chart'
 import { PieChartComponent } from '@/components/dashboard/charts/pie-chart'
 import { analyzeDataForChart } from '@/lib/charts/analyzer'
+import { ChatInterface } from '@/components/dashboard/chat-interface'
 
 export default async function DataSourcePage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params
@@ -126,6 +127,15 @@ function DataSourcePageClient({ id }: { id: string }) {
                         </div>
                     </div>
                 )}
+
+                {/* AI Chat Interface */}
+                <div className="mb-8">
+                    <h2 className="text-xl font-semibold text-gray-900 mb-4">💬 Ask AI About Your Data</h2>
+                    <ChatInterface
+                        dataSourceId={id}
+                        dataSourceName={dataSource?.name || 'your data'}
+                    />
+                </div>
 
                 {/* Charts Grid */}
                 <div className="space-y-8">
