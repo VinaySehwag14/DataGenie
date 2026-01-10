@@ -37,11 +37,36 @@ export default function DashboardPage() {
             Papa.parse(csvText, {
                 header: true,
                 skipEmptyLines: true,
-                complete: (results) => {
+                complete: async (results) => {
                     if (results.data.length > 0) {
-                        handleDataParsed(results.data, fileName)
+                        try {
+                            // Automatically save the data
+                            const saveResponse = await fetch('/api/data/upload', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({
+                                    fileName,
+                                    data: results.data,
+                                }),
+                            })
+
+                            const result = await saveResponse.json()
+
+                            if (!saveResponse.ok) {
+                                throw new Error(result.error || 'Failed to save sample data')
+                            }
+
+                            // Success! Redirect to analysis page
+                            router.push(`/dashboard/data/${result.dataSource.id}`)
+                        } catch (saveError: any) {
+                            console.error('Error saving sample data:', saveError)
+                            setError(saveError.message || 'Failed to save sample data')
+                            setLoadingSample(null)
+                        }
+                    } else {
+                        setError('Sample data is empty')
+                        setLoadingSample(null)
                     }
-                    setLoadingSample(null)
                 },
                 error: (error: any) => {
                     console.error('Error parsing sample CSV:', error)
