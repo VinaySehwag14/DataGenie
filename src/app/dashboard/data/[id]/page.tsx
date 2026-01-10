@@ -10,6 +10,8 @@ import { PieChartComponent } from '@/components/dashboard/charts/pie-chart'
 import { analyzeDataForChart } from '@/lib/charts/analyzer'
 import { ChatInterface } from '@/components/dashboard/chat-interface'
 import { InsightsPanel } from '@/components/dashboard/insights-panel'
+import { ExportMenu } from '@/components/dashboard/export-menu'
+import { EnhancedDataTable } from '@/components/dashboard/enhanced-data-table'
 
 export default async function DataSourcePage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params
@@ -23,6 +25,7 @@ function DataSourcePageClient({ id }: { id: string }) {
     const [analysis, setAnalysis] = useState<any>(null)
     const [loading, setLoading] = useState(true)
     const [user, setUser] = useState<any>(null)
+    const [insights, setInsights] = useState<any[]>([])
 
     const router = useRouter()
     const supabase = createClient()
@@ -50,10 +53,26 @@ function DataSourcePageClient({ id }: { id: string }) {
             // Analyze data for chart recommendations
             const chartAnalysis = analyzeDataForChart(result.data)
             setAnalysis(chartAnalysis)
+
+            // Fetch insights for sharing
+            fetchInsights()
         } catch (err) {
             console.error('Failed to load data:', err)
         } finally {
             setLoading(false)
+        }
+    }
+
+    const fetchInsights = async () => {
+        try {
+            const response = await fetch(`/api/insights/${id}`)
+            const result = await response.json()
+
+            if (result.insights) {
+                setInsights(result.insights)
+            }
+        } catch (err) {
+            console.error('Failed to load insights:', err)
         }
     }
 
@@ -98,13 +117,20 @@ function DataSourcePageClient({ id }: { id: string }) {
                         </div>
                     </div>
 
-                    <button
-                        onClick={handleLogout}
-                        className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition"
-                    >
-                        <LogOut className="w-4 h-4" />
-                        Logout
-                    </button>
+                    <div className="flex items-center gap-3">
+                        <ExportMenu
+                            data={data}
+                            dataSourceName={dataSource?.name || 'data'}
+                            insights={insights}
+                        />
+                        <button
+                            onClick={handleLogout}
+                            className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition"
+                        >
+                            <LogOut className="w-4 h-4" />
+                            Logout
+                        </button>
+                    </div>
                 </div>
             </header>
 
@@ -132,6 +158,16 @@ function DataSourcePageClient({ id }: { id: string }) {
                 {/* Auto-Generated Insights */}
                 <div className="mb-8">
                     <InsightsPanel dataSourceId={id} />
+                </div>
+
+                {/* Data Preview with Search & Filter */}
+                <div className="mb-8">
+                    <h2 className="text-xl font-semibold text-gray-900 mb-4">📊 Data Preview</h2>
+                    <EnhancedDataTable
+                        data={data}
+                        fileName={dataSource?.name || 'data'}
+                        maxRows={50}
+                    />
                 </div>
 
                 {/* AI Chat Interface */}

@@ -82,8 +82,8 @@ export function generateStatisticalInsights(
             insights.push({
                 type: 'top',
                 title: `Top ${catCol}`,
-                description: `${top[0]} has the highest ${numCol}`,
-                value: top[1].toLocaleString('en-IN', { maximumFractionDigits: 0 }),
+                description: `${top[0]} generated ${top[1].toLocaleString('en-IN', { maximumFractionDigits: 0 })} in ${numCol}`,
+                value: top[0], // Show the category NAME, not the value
                 icon: '🏆',
                 color: 'yellow'
             })
