@@ -103,44 +103,44 @@ export function ChatInterface({ dataSourceId, dataSourceName }: ChatInterfacePro
     }
 
     return (
-        <div className="flex flex-col h-[600px] bg-white rounded-xl shadow-lg border border-gray-200">
+        <div className="flex flex-col h-[600px] bg-transparent">
             {/* Header */}
-            <div className="px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-indigo-50 to-pink-50">
+            <div className="px-6 py-4 border-b border-white/10 bg-white/5 backdrop-blur-md rounded-t-2xl">
                 <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center">
-                        <Sparkles className="w-5 h-5 text-indigo-600" />
+                    <div className="w-10 h-10 bg-indigo-500/20 rounded-lg flex items-center justify-center border border-indigo-500/30">
+                        <Sparkles className="w-5 h-5 text-indigo-400" />
                     </div>
                     <div>
-                        <h3 className="font-semibold text-gray-900">AI Data Analyst</h3>
-                        <p className="text-sm text-gray-600">Chat with your data</p>
+                        <h3 className="font-semibold text-white">AI Data Analyst</h3>
+                        <p className="text-sm text-gray-400">Chat with your data</p>
                     </div>
                 </div>
             </div>
 
             {/* Messages */}
-            <div className="flex-1 overflow-y-auto p-6 space-y-4">
+            <div className="flex-1 overflow-y-auto p-6 space-y-4 min-h-0 custom-scrollbar">
                 {messages.map((message, index) => (
                     <div
                         key={index}
                         className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
                     >
                         <div
-                            className={`max-w-[80%] rounded-lg px-4 py-3 ${message.role === 'user'
-                                ? 'bg-indigo-600 text-white'
+                            className={`max-w-[85%] rounded-2xl px-5 py-3 shadow-lg backdrop-blur-sm border ${message.role === 'user'
+                                ? 'bg-indigo-600/90 text-white border-indigo-500/50 rounded-tr-sm'
                                 : message.error
-                                    ? 'bg-red-50 text-red-900 border border-red-200'
-                                    : 'bg-gray-100 text-gray-900'
+                                    ? 'bg-red-900/20 text-red-200 border-red-500/30 rounded-tl-sm'
+                                    : 'bg-white/10 text-gray-200 border-white/10 rounded-tl-sm'
                                 }`}
                         >
-                            <p className="whitespace-pre-wrap">{message.content}</p>
+                            <p className="whitespace-pre-wrap leading-relaxed">{message.content}</p>
 
                             {/* Show SQL if available */}
                             {message.sql && (
-                                <details className="mt-3 text-sm">
-                                    <summary className="cursor-pointer text-gray-600 hover:text-gray-900">
-                                        View SQL Query
+                                <details className="mt-3 text-sm group">
+                                    <summary className="cursor-pointer text-indigo-300 hover:text-indigo-200 flex items-center gap-2">
+                                        <Database className="w-3 h-3" /> View SQL Query
                                     </summary>
-                                    <pre className="mt-2 p-3 bg-gray-800 text-green-400 rounded text-xs overflow-x-auto">
+                                    <pre className="mt-2 p-3 bg-black/50 text-emerald-400 rounded-lg text-xs overflow-x-auto border border-white/5 font-mono">
                                         {message.sql}
                                     </pre>
                                 </details>
@@ -148,22 +148,22 @@ export function ChatInterface({ dataSourceId, dataSourceName }: ChatInterfacePro
 
                             {/* Show data table if available */}
                             {message.data && message.data.length > 0 && (
-                                <div className="mt-3 overflow-x-auto">
-                                    <table className="min-w-full text-sm border border-gray-300 rounded">
-                                        <thead className="bg-gray-200">
+                                <div className="mt-3 overflow-x-auto rounded-lg border border-white/10">
+                                    <table className="min-w-full text-sm">
+                                        <thead className="bg-white/5">
                                             <tr>
                                                 {Object.keys(message.data[0]).map((key, i) => (
-                                                    <th key={i} className="px-3 py-2 text-left font-semibold">
+                                                    <th key={i} className="px-3 py-2 text-left font-semibold text-gray-300 border-b border-white/10">
                                                         {key}
                                                     </th>
                                                 ))}
                                             </tr>
                                         </thead>
-                                        <tbody>
+                                        <tbody className="bg-black/20 divide-y divide-white/5">
                                             {message.data.slice(0, 10).map((row, i) => (
-                                                <tr key={i} className="border-t border-gray-300">
+                                                <tr key={i} className="hover:bg-white/5 transition-colors">
                                                     {Object.values(row).map((value: any, j) => (
-                                                        <td key={j} className="px-3 py-2">
+                                                        <td key={j} className="px-3 py-2 text-gray-300">
                                                             {typeof value === 'number'
                                                                 ? value.toLocaleString()
                                                                 : value?.toString() || '—'}
@@ -174,9 +174,9 @@ export function ChatInterface({ dataSourceId, dataSourceName }: ChatInterfacePro
                                         </tbody>
                                     </table>
                                     {message.data.length > 10 && (
-                                        <p className="text-xs text-gray-500 mt-2">
+                                        <div className="px-3 py-2 bg-white/5 border-t border-white/10 text-xs text-gray-400">
                                             +{message.data.length - 10} more rows
-                                        </p>
+                                        </div>
                                     )}
                                 </div>
                             )}
@@ -186,9 +186,9 @@ export function ChatInterface({ dataSourceId, dataSourceName }: ChatInterfacePro
 
                 {loading && (
                     <div className="flex justify-start">
-                        <div className="bg-gray-100 rounded-lg px-4 py-3 flex items-center gap-2">
-                            <Loader2 className="w-4 h-4 animate-spin text-indigo-600" />
-                            <span className="text-gray-600">Analyzing...</span>
+                        <div className="bg-white/5 rounded-2xl rounded-tl-sm px-5 py-3 flex items-center gap-3 border border-white/10">
+                            <Loader2 className="w-4 h-4 animate-spin text-indigo-400" />
+                            <span className="text-gray-400 text-sm">Analyzing your data...</span>
                         </div>
                     </div>
                 )}
@@ -197,21 +197,21 @@ export function ChatInterface({ dataSourceId, dataSourceName }: ChatInterfacePro
             </div>
 
             {/* Input */}
-            <div className="px-6 py-4 border-t border-gray-200">
+            <div className="px-6 py-4 border-t border-white/10 bg-white/5 backdrop-blur-md rounded-b-2xl">
                 <div className="flex gap-3">
                     <input
                         type="text"
                         value={input}
                         onChange={(e) => setInput(e.target.value)}
                         onKeyPress={handleKeyPress}
-                        placeholder="Ask a question about your data..."
+                        placeholder="Ask a question..."
                         disabled={loading}
-                        className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="flex-1 px-4 py-3 bg-black/20 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 outline-none transition disabled:opacity-50 disabled:cursor-not-allowed"
                     />
                     <button
                         onClick={handleSend}
                         disabled={loading || !input.trim()}
-                        className="px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition flex items-center gap-2"
+                        className="px-6 py-3 bg-indigo-600 text-white rounded-xl hover:bg-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg shadow-indigo-500/20 flex items-center gap-2"
                     >
                         {loading ? (
                             <Loader2 className="w-5 h-5 animate-spin" />
@@ -222,14 +222,14 @@ export function ChatInterface({ dataSourceId, dataSourceName }: ChatInterfacePro
                 </div>
 
                 {/* Suggested questions */}
-                <div className="mt-3 flex flex-wrap gap-2">
-                    <span className="text-xs text-gray-500">Try:</span>
+                <div className="mt-4 flex flex-wrap gap-2">
+                    <span className="text-xs text-indigo-300/80 font-medium py-1">Try asking:</span>
                     {suggestedQuestions.map((suggestion, i) => (
                         <button
                             key={i}
                             onClick={() => setInput(suggestion)}
                             disabled={loading}
-                            className="text-xs px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded-full text-gray-700 transition disabled:opacity-50"
+                            className="text-xs px-3 py-1 bg-white/5 hover:bg-white/10 border border-white/10 rounded-full text-gray-300 transition-all disabled:opacity-50"
                         >
                             {suggestion}
                         </button>

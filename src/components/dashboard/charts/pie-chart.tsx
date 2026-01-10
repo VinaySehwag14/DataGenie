@@ -19,21 +19,25 @@ export function PieChartComponent({ data, nameKey, valueKey, title }: PieChartCo
     }))
 
     return (
-        <div className="w-full bg-white rounded-xl shadow-lg border border-gray-200 p-6">
-            {title && <h3 className="text-lg font-semibold text-gray-900 mb-4">{title}</h3>}
+        <div className="w-full h-full">
+            {title && <h3 className="text-lg font-semibold text-white mb-4">{title}</h3>}
 
-            <ResponsiveContainer width="100%" height={400}>
+            <ResponsiveContainer width="100%" height={300}>
                 <PieChart>
                     <Pie
                         data={pieData}
                         cx="50%"
                         cy="50%"
                         labelLine={false}
-                        label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
-                        outerRadius={120}
+                        label={({ name, percent }) => `${(percent * 100).toFixed(0)}%`}
+                        outerRadius={100}
+                        innerRadius={60}
                         fill="#8884d8"
                         dataKey="value"
-                        animationDuration={800}
+                        animationDuration={1500}
+                        stroke="rgba(0,0,0,0.5)"
+                        strokeWidth={2}
+                        paddingAngle={5}
                     >
                         {pieData.map((entry, index) => (
                             <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
@@ -41,11 +45,13 @@ export function PieChartComponent({ data, nameKey, valueKey, title }: PieChartCo
                     </Pie>
                     <Tooltip
                         contentStyle={{
-                            backgroundColor: '#fff',
-                            border: '1px solid #e5e7eb',
-                            borderRadius: '8px',
-                            boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+                            backgroundColor: 'rgba(17, 24, 39, 0.95)',
+                            border: '1px solid rgba(255, 255, 255, 0.1)',
+                            borderRadius: '12px',
+                            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4)',
+                            color: '#fff'
                         }}
+                        itemStyle={{ color: '#e5e7eb' }}
                     />
                     <Legend
                         verticalAlign="bottom"

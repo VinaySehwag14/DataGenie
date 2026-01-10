@@ -132,9 +132,9 @@ export function UploadZone({ onDataParsed }: UploadZoneProps) {
     return (
         <div className="w-full">
             {error && (
-                <div className="mb-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg flex items-start gap-2">
+                <div className="mb-4 bg-red-900/20 border border-red-500/50 text-red-200 px-4 py-3 rounded-xl flex items-start gap-2 backdrop-blur-sm">
                     <span className="flex-1">{error}</span>
-                    <button onClick={() => setError(null)} className="text-red-500 hover:text-red-700">
+                    <button onClick={() => setError(null)} className="text-red-400 hover:text-red-300 transition-colors">
                         <X className="w-4 h-4" />
                     </button>
                 </div>
@@ -145,10 +145,10 @@ export function UploadZone({ onDataParsed }: UploadZoneProps) {
                 onDragLeave={handleDragLeave}
                 onDrop={handleDrop}
                 className={`
-          border-2 border-dashed rounded-xl p-12 text-center transition-all
+          border-2 border-dashed rounded-2xl p-12 text-center transition-all duration-300
           ${isDragging
-                        ? 'border-indigo-500 bg-indigo-50'
-                        : 'border-gray-300 bg-gray-50 hover:border-indigo-400 hover:bg-indigo-50/50'
+                        ? 'border-indigo-500 bg-indigo-500/10 scale-[1.02]'
+                        : 'border-white/10 bg-white/5 hover:border-indigo-500/50 hover:bg-white/10'
                     }
           ${uploading ? 'opacity-50 pointer-events-none' : ''}
         `}
@@ -156,36 +156,38 @@ export function UploadZone({ onDataParsed }: UploadZoneProps) {
                 <div className="flex flex-col items-center gap-4">
                     {uploading ? (
                         <>
-                            <div className="w-16 h-16 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin" />
-                            <p className="text-gray-600 font-medium">Processing your file...</p>
+                            <div className="w-16 h-16 border-4 border-indigo-500/30 border-t-indigo-500 rounded-full animate-spin" />
+                            <p className="text-gray-300 font-medium">Processing your file...</p>
                         </>
                     ) : (
                         <>
-                            <div className="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center">
+                            <div className={`w-16 h-16 rounded-full flex items-center justify-center transition-colors ${isDragging ? 'bg-indigo-500/20' : 'bg-white/10'
+                                }`}>
                                 {isDragging ? (
-                                    <FileSpreadsheet className="w-8 h-8 text-indigo-600" />
+                                    <FileSpreadsheet className="w-8 h-8 text-indigo-400" />
                                 ) : (
-                                    <Upload className="w-8 h-8 text-indigo-600" />
+                                    <Upload className="w-8 h-8 text-gray-400" />
                                 )}
                             </div>
 
                             <div>
-                                <p className="text-lg font-semibold text-gray-900 mb-1">
+                                <p className="text-lg font-bold text-white mb-2">
                                     {isDragging ? 'Drop your file here' : 'Upload your data'}
                                 </p>
-                                <p className="text-sm text-gray-600">
+                                <p className="text-sm text-gray-400">
                                     Drag and drop a CSV or Excel file, or click to browse
                                 </p>
                             </div>
 
-                            <label className="cursor-pointer">
+                            <label className="cursor-pointer relative group">
                                 <input
                                     type="file"
                                     accept=".csv,.xlsx,.xls,text/csv,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                                     onChange={handleFileInput}
                                     className="hidden"
                                 />
-                                <span className="inline-flex items-center gap-2 px-6 py-3 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700 transition">
+                                <div className="absolute -inset-1 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-xl blur opacity-30 group-hover:opacity-75 transition duration-500"></div>
+                                <span className="relative inline-flex items-center gap-2 px-6 py-3 bg-gray-900 border border-white/10 text-white font-medium rounded-lg hover:bg-gray-800 transition">
                                     <Upload className="w-4 h-4" />
                                     Choose File
                                 </span>
