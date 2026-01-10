@@ -29,7 +29,7 @@ export function PieChartComponent({ data, nameKey, valueKey, title }: PieChartCo
                         cx="50%"
                         cy="50%"
                         labelLine={false}
-                        label={({ name, percent }) => `${(percent * 100).toFixed(0)}%`}
+                        label={({ percent }) => `${((percent || 0) * 100).toFixed(0)}%`}
                         outerRadius={100}
                         innerRadius={60}
                         fill="#8884d8"

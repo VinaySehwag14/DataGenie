@@ -53,10 +53,17 @@ export default function Navbar() {
     const isActive = (path: string) => pathname === path
 
     const navLinks = [
-        { name: 'Features', href: '/features' },
+        { name: 'Home', href: '/' },
+        { name: 'Dashboard', href: '/dashboard' },
         { name: 'Pricing', href: '/pricing' },
         { name: 'About', href: '/about' },
     ]
+
+    const handleLogout = async () => {
+        await supabase.auth.signOut()
+        router.push('/login')
+        setUser(null)
+    }
 
     return (
         <header
@@ -84,9 +91,9 @@ export default function Navbar() {
                         <Link
                             key={link.name}
                             href={link.href}
-                            className={`px-5 py-2 rounded-full text-sm font-medium transition-all duration-300 ${isActive(link.href)
-                                    ? 'bg-white/10 text-white shadow-sm'
-                                    : 'text-gray-400 hover:text-white hover:bg-white/5'
+                            className={`px-5 py-2 rounded-full text-sm font-medium transition-all duration-300 flex items-center gap-2 ${isActive(link.href)
+                                ? 'bg-white/10 text-white shadow-sm'
+                                : 'text-gray-400 hover:text-white hover:bg-white/5'
                                 }`}
                         >
                             {link.name}
@@ -98,15 +105,17 @@ export default function Navbar() {
                 <div className="hidden md:flex items-center gap-4">
                     {!loading && (
                         user ? (
-                            <Link
-                                href="/dashboard"
-                                className="group relative px-6 py-2.5 bg-white text-gray-950 rounded-xl font-bold text-sm hover:shadow-[0_0_20px_rgba(255,255,255,0.3)] transition-all duration-300 flex items-center gap-2 overflow-hidden"
-                            >
-                                <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/20 to-purple-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                                <span className="relative z-10 flex items-center gap-2">
-                                    Dashboard <Rocket className="w-4 h-4" />
+                            <div className="flex items-center gap-4">
+                                <span className="text-sm text-gray-400 hidden lg:inline-block">
+                                    {user.email}
                                 </span>
-                            </Link>
+                                <button
+                                    onClick={handleLogout}
+                                    className="px-4 py-2 text-sm font-medium text-gray-400 hover:text-white hover:bg-white/10 rounded-xl transition-all border border-transparent hover:border-white/10"
+                                >
+                                    Logout
+                                </button>
+                            </div>
                         ) : (
                             <>
                                 <Link

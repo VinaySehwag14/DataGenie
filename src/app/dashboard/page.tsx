@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { UploadZone } from '@/components/dashboard/upload-zone'
 import { DataTable } from '@/components/dashboard/data-table'
-import { BarChart3, LogOut, Plus, Database, Trash2, Home, Layout, CreditCard, Info } from 'lucide-react'
+import { BarChart3, LogOut, Plus, Database, Trash2, Home, Layout, CreditCard, Info, Sparkles } from 'lucide-react'
 
 export default function DashboardPage() {
     const [user, setUser] = useState<any>(null)
@@ -102,49 +102,7 @@ export default function DashboardPage() {
                 </div>
             )}
 
-            {/* Header */}
-            <header className="fixed top-0 left-0 right-0 z-50 backdrop-blur-xl border-b border-white/10 bg-gray-950/50">
-                <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                        <Link href="/" className="group">
-                            <div className="w-10 h-10 btn-gradient-primary rounded-xl flex items-center justify-center group-hover:scale-105 transition-transform duration-300 shadow-lg shadow-indigo-500/20">
-                                <Sparkles className="w-6 h-6 text-white text-shadow" />
-                            </div>
-                        </Link>
-                        <div>
-                            <h1 className="text-xl font-black tracking-tight text-white group-hover:text-gradient-primary transition-colors cursor-default">
-                                DataGenie
-                            </h1>
-                            <p className="text-xs text-gray-400 font-medium">
-                                {user?.email || 'Welcome Back'}
-                            </p>
-                        </div>
-                    </div>
 
-                    <nav className="hidden md:flex items-center gap-1 bg-white/5 rounded-full p-1 border border-white/5 backdrop-blur-lg mx-4">
-                        <Link href="/" className="px-4 py-2 text-sm text-gray-400 hover:text-white hover:bg-white/10 rounded-full transition-all flex items-center gap-2">
-                            <Home className="w-4 h-4" /> Home
-                        </Link>
-                        <Link href="/dashboard" className="px-4 py-2 text-sm text-white bg-white/10 rounded-full transition-all flex items-center gap-2 shadow-sm font-medium">
-                            <Layout className="w-4 h-4" /> Dashboard
-                        </Link>
-                        <Link href="/pricing" className="px-4 py-2 text-sm text-gray-400 hover:text-white hover:bg-white/10 rounded-full transition-all flex items-center gap-2">
-                            <CreditCard className="w-4 h-4" /> Pricing
-                        </Link>
-                        <Link href="/about" className="px-4 py-2 text-sm text-gray-400 hover:text-white hover:bg-white/10 rounded-full transition-all flex items-center gap-2">
-                            <Info className="w-4 h-4" /> About
-                        </Link>
-                    </nav>
-
-                    <button
-                        onClick={handleLogout}
-                        className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-400 hover:text-white hover:bg-white/10 rounded-xl transition-all border border-transparent hover:border-white/10"
-                    >
-                        <LogOut className="w-4 h-4" />
-                        Logout
-                    </button>
-                </div>
-            </header>
 
             {/* Main Content */}
             <main className="relative z-10 max-w-7xl mx-auto px-6 pt-32 pb-12">

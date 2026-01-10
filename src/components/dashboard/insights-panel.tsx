@@ -79,7 +79,8 @@ export function InsightsPanel({ dataSourceId }: InsightsPanelProps) {
                             {insight.value && (
                                 <span
                                     className={`px-3 py-1 rounded-full text-white text-xs font-bold shadow-lg bg-gradient-to-r ${colorMap[insight.color] || colorMap.blue
-                                        }`}
+                                        } max-w-[150px] truncate`}
+                                    title={typeof insight.value === 'string' ? insight.value : insight.value?.toString()}
                                 >
                                     {insight.value}
                                 </span>

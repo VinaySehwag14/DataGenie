@@ -104,61 +104,7 @@ export default function DataSourcePageClient({ params }: { params: Promise<{ id:
                 <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:50px_50px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)]"></div>
             </div>
 
-            {/* Header */}
-            <header className="fixed top-0 left-0 right-0 z-50 backdrop-blur-xl border-b border-white/10 bg-gray-950/50">
-                <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                        <button
-                            onClick={() => router.push('/dashboard')}
-                            className="p-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white transition-all border border-transparent hover:border-white/10 group"
-                        >
-                            <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
-                        </button>
 
-                        <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 btn-gradient-primary rounded-xl flex items-center justify-center shadow-lg shadow-indigo-500/20">
-                                <BarChart3 className="w-5 h-5 text-white" />
-                            </div>
-                            <div>
-                                <h1 className="text-lg font-bold text-white leading-tight">
-                                    {dataSource?.name || 'Loading...'}
-                                </h1>
-                                <p className="text-xs text-gray-400 font-medium flex items-center gap-1.5">
-                                    <span className="w-1.5 h-1.5 bg-green-500 rounded-full glow-animation"></span>
-                                    {dataSource?.row_count.toLocaleString()} rows verified
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <nav className="hidden md:flex items-center gap-1 bg-white/5 rounded-full p-1 border border-white/5 backdrop-blur-lg mx-4">
-                        <Link href="/" className="p-2.5 rounded-full hover:bg-white/10 text-gray-400 hover:text-white transition-colors" title="Home">
-                            <Home className="w-4 h-4" />
-                        </Link>
-                        <Link href="/dashboard" className="p-2.5 rounded-full bg-white/10 text-white shadow-sm transition-colors" title="Dashboard">
-                            <LayoutGrid className="w-4 h-4" />
-                        </Link>
-                        <Link href="/pricing" className="p-2.5 rounded-full hover:bg-white/10 text-gray-400 hover:text-white transition-colors" title="Pricing">
-                            <CreditCard className="w-4 h-4" />
-                        </Link>
-                    </nav>
-
-                    <div className="flex items-center gap-3">
-                        <ExportMenu
-                            data={data}
-                            dataSourceName={dataSource?.name || 'data'}
-                            insights={insights}
-                        />
-                        <button
-                            onClick={handleLogout}
-                            className="p-2.5 rounded-xl bg-white/5 hover:bg-red-500/10 text-gray-400 hover:text-red-400 transition-all border border-transparent hover:border-red-500/20"
-                            title="Logout"
-                        >
-                            <LogOut className="w-5 h-5" />
-                        </button>
-                    </div>
-                </div>
-            </header>
 
             {/* Main Content */}
             <main className="relative z-10 max-w-7xl mx-auto px-6 pt-28 pb-12">
@@ -203,26 +149,20 @@ export default function DataSourcePageClient({ params }: { params: Promise<{ id:
 
                         {/* Chat Interface */}
                         <div className="bg-gray-900/50 border border-white/10 rounded-2xl backdrop-blur-md overflow-hidden card-3d animate-in slide-in-from-bottom-5 fade-in duration-700 delay-100">
-                            <div className="p-4 border-b border-white/10 bg-white/5 flex items-center gap-2">
-                                <MessageSquare className="w-4 h-4 text-indigo-400" />
-                                <h3 className="font-bold text-white text-sm">Data Genie Chat</h3>
-                            </div>
-                            <div className="p-1">
-                                <ChatInterface
-                                    dataSourceId={id || ''}
-                                    dataSourceName={dataSource?.name || 'your data'}
-                                />
-                            </div>
-                        </div>
-
-                        {/* Insights Panel */}
-                        <div className="animate-in slide-in-from-bottom-5 fade-in duration-700 delay-200">
-                            <InsightsPanel dataSourceId={id || ''} />
+                            <ChatInterface
+                                dataSourceId={id || ''}
+                                dataSourceName={dataSource?.name || 'your data'}
+                            />
                         </div>
                     </div>
 
                     {/* Right Column: Visualization & Data */}
                     <div className="lg:col-span-2 space-y-8">
+                        {/* Insights Panel - Moved from sidebar for better visibility */}
+                        <div className="animate-in slide-in-from-bottom-5 fade-in duration-700 delay-200">
+                            <InsightsPanel dataSourceId={id || ''} />
+                        </div>
+
                         {/* Charts Grid */}
                         <div className="space-y-8">
                             {analysis?.recommendations.map((rec: any, index: number) => (
@@ -299,7 +239,8 @@ export default function DataSourcePageClient({ params }: { params: Promise<{ id:
                         </div>
                     </div>
                 </div>
-            </main>
-        </div>
+
+            </main >
+        </div >
     )
 }
