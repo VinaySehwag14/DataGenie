@@ -1,16 +1,64 @@
-Date,Product,Category,Region,Sales,Units,Profit
-2024-01-01,Laptop Pro,Electronics,North,1200,5,200
-2024-01-02,Smart Watch,Electronics,South,300,10,50
-2024-01-03,Office Chair,Furniture,West,150,8,40
-2024-01-04,Mechanical Keyboard,Electronics,North,200,12,60
-2024-01-05,Desk Lamp,Furniture,East,50,20,10
-2024-01-06,Laptop Pro,Electronics,East,1200,3,200
-2024-01-07,Gaming Monitor,Electronics,West,800,7,120
-2024-01-08,Office Chair,Furniture,North,150,15,40
-2024-01-09,Smart Watch,Electronics,East,300,12,50
-2024-01-10,Desk Lamp,Furniture,South,50,25,10
-2024-01-11,Laptop Pro,Electronics,South,1200,6,200
-2024-01-12,Gaming Monitor,Electronics,North,800,4,120
-2024-01-13,Mechanical Keyboard,Electronics,West,200,15,60
-2024-01-14,Office Chair,Furniture,East,150,10,40
-2024-01-15,Smart Watch,Electronics,North,300,8,50
+Date,Product,Category,Region,Customer Segment,Sales,Units,Discount,Profit,Returns
+2024-01-01,Laptop Pro X1,Electronics,North,Corporate,15000,10,0.05,3500,0
+2024-01-02,ErgoChair Supreme,Furniture,West,Home Office,850,2,0.00,350,0
+2024-01-03,Wireless Earbuds,Electronics,South,Consumer,1200,15,0.10,300,1
+2024-01-04,Mechanical Keyboard,Electronics,East,Gamer,2500,20,0.00,1000,0
+2024-01-05,Laptop Pro X1,Electronics,West,Startup,4500,3,0.00,1200,0
+2024-01-06,Smart Watch Gen 5,Electronics,North,Consumer,3200,10,0.05,800,0
+2024-01-07,Standing Desk,Furniture,East,Corporate,12000,20,0.15,2500,2
+2024-01-08,4K Monitor 27",Electronics,South,Corporate,5600,14,0.05,1200,0
+2024-01-09,Laptop Stand,Accessories,West,Home Office,450,15,0.00,200,0
+2024-01-10,Laptop Pro X1,Electronics,North,Corporate,30000,20,0.10,6500,0
+2024-01-11,USB-C Dock,Accessories,East,Startup,1800,12,0.00,600,0
+2024-01-12,ErgoChair Supreme,Furniture,South,Corporate,4250,10,0.05,1500,1
+2024-01-13,Wireless Earbuds,Electronics,West,Consumer,800,10,0.00,200,0
+2024-01-14,Webcam 4K,Electronics,North,Home Office,1200,8,0.00,500,0
+2024-01-15,Laptop Pro X1,Electronics,South,Consumer,1500,1,0.00,400,0
+2024-01-16,Smart Watch Gen 5,Electronics,East,Consumer,1600,5,0.00,400,0
+2024-01-17,Mechanical Keyboard,Electronics,West,Gamer,1250,10,0.10,450,1
+2024-01-18,Standing Desk,Furniture,North,Home Office,3000,5,0.00,800,0
+2024-01-19,Laptop Pro X1,Electronics,East,Corporate,7500,5,0.02,1800,0
+2024-01-20,4K Monitor 27",Electronics,South,Startup,2400,6,0.05,500,0
+2024-01-21,Noise Cancelling Headphones,Electronics,West,Consumer,3500,10,0.00,1000,0
+2024-01-22,ErgoChair Supreme,Furniture,North,Corporate,8500,20,0.15,2800,3
+2024-01-23,Laptop Pro X1,Electronics,East,Consumer,3000,2,0.00,800,0
+2024-01-24,Smart Watch Gen 5,Electronics,South,Consumer,960,3,0.10,200,0
+2024-01-25,Wireless Earbuds,Electronics,West,Consumer,2400,30,0.20,500,2
+2024-01-26,Standing Desk,Furniture,East,Startup,2400,4,0.00,600,0
+2024-01-27,Laptop Pro X1,Electronics,North,Corporate,15000,10,0.05,3500,0
+2024-01-28,4K Monitor 27",Electronics,South,Gamer,1600,4,0.00,350,0
+2024-01-29,Mouse Wireless,Accessories,West,Home Office,500,20,0.00,250,0
+2024-01-30,Mechanical Keyboard,Electronics,East,Gamer,1875,15,0.05,600,0
+2024-02-01,Laptop Pro X1,Electronics,North,Corporate,45000,30,0.15,9000,1
+2024-02-02,ErgoChair Supreme,Furniture,South,Consumer,425,1,0.00,100,0
+2024-02-03,Smart Watch Gen 5,Electronics,West,Consumer,4800,15,0.05,1100,0
+2024-02-04,Standing Desk,Furniture,East,Corporate,9000,15,0.10,2000,1
+2024-02-05,Laptop Pro X1,Electronics,South,Corporate,9000,6,0.00,2400,0
+2024-02-06,Wireless Earbuds,Electronics,North,Consumer,4000,50,0.25,800,4
+2024-02-07,Mouse Wireless,Accessories,West,Startup,250,10,0.00,125,0
+2024-02-08,4K Monitor 27",Electronics,East,Home Office,3200,8,0.10,600,0
+2024-02-09,Laptop Pro X1,Electronics,West,Gamer,3000,2,0.00,800,0
+2024-02-10,Mechanical Keyboard,Electronics,South,Gamer,3750,30,0.10,1200,2
+2024-02-11,ErgoChair Supreme,Furniture,North,Home Office,1700,4,0.00,600,0
+2024-02-12,Smart Watch Gen 5,Electronics,East,Consumer,2240,7,0.05,500,0
+2024-02-13,Standing Desk,Furniture,West,Corporate,18000,30,0.15,4500,3
+2024-02-14,Laptop Pro X1,Electronics,South,Consumer,5800,4,0.05,1400,0
+2024-02-15,Wireless Earbuds,Electronics,North,Consumer,240,3,0.00,60,0
+2024-02-16,4K Monitor 27",Electronics,East,Startup,1200,3,0.00,250,0
+2024-02-17,Mouse Wireless,Accessories,West,Corporate,1250,50,0.10,500,0
+2024-02-18,Laptop Pro X1,Electronics,North,Corporate,7500,5,0.00,2000,0
+2024-02-19,ErgoChair Supreme,Furniture,South,Startup,8500,20,0.10,2500,1
+2024-02-20,Mechanical Keyboard,Electronics,East,Gamer,625,5,0.00,200,0
+2024-02-21,Smart Watch Gen 5,Electronics,West,Consumer,1600,5,0.00,400,0
+2024-02-22,Standing Desk,Furniture,North,Corporate,6000,10,0.05,1500,0
+2024-02-23,Laptop Pro X1,Electronics,South,Home Office,1500,1,0.00,400,0
+2024-02-24,Wireless Earbuds,Electronics,East,Consumer,1600,20,0.15,350,1
+2024-02-25,4K Monitor 27",Electronics,West,Corporate,4000,10,0.05,900,0
+2024-02-26,Mouse Wireless,Accessories,North,Consumer,125,5,0.00,60,0
+2024-02-27,ErgoChair Supreme,Furniture,South,Corporate,2125,5,0.00,700,0
+2024-02-28,Laptop Pro X1,Electronics,East,Startup,10500,7,0.00,2800,0
+2024-03-01,Standing Desk,Furniture,West,Corporate,30000,50,0.20,6000,5
+2024-03-02,Mechanical Keyboard,Electronics,North,Gamer,5000,40,0.10,1500,2
+2024-03-03,Smart Watch Gen 5,Electronics,East,Consumer,6400,20,0.05,1600,0
+2024-03-04,Laptop Pro X1,Electronics,South,Corporate,22500,15,0.05,5500,1
+2024-03-05,Wireless Earbuds,Electronics,West,Consumer,4000,50,0.15,900,3
