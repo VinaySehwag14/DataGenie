@@ -3,9 +3,10 @@
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { UploadZone } from '@/components/dashboard/upload-zone'
 import { DataTable } from '@/components/dashboard/data-table'
-import { BarChart3, LogOut, Plus, Database, Trash2 } from 'lucide-react'
+import { BarChart3, LogOut, Plus, Database, Trash2, Home, Layout, CreditCard, Info } from 'lucide-react'
 
 export default function DashboardPage() {
     const [user, setUser] = useState<any>(null)
@@ -124,39 +125,45 @@ export default function DashboardPage() {
     }
 
     return (
-        <div className="min-h-screen bg-gray-50">
+        <div className="min-h-screen bg-gray-950 text-white relative selection:bg-indigo-500/30">
+            {/* Background Effects */}
+            <div className="fixed inset-0 z-0">
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_-20%,rgba(120,119,198,0.3),rgba(255,255,255,0))]"></div>
+                <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:50px_50px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)]"></div>
+            </div>
+
             {/* Delete Confirmation Modal */}
             {deleteConfirm && (
-                <div className="fixed inset-0 backdrop-blur-sm bg-white/30 flex items-center justify-center z-50 p-4">
-                    <div className="bg-white rounded-xl shadow-2xl max-w-md w-full p-6 animate-in fade-in duration-200">
-                        <div className="flex items-center gap-3 mb-4">
-                            <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center flex-shrink-0">
-                                <Trash2 className="w-6 h-6 text-red-600" />
+                <div className="fixed inset-0 backdrop-blur-md bg-black/60 flex items-center justify-center z-50 p-4">
+                    <div className="bg-gray-900/90 border border-white/10 rounded-2xl shadow-2xl max-w-md w-full p-6 animate-in fade-in zoom-in duration-300 card-3d">
+                        <div className="flex items-center gap-4 mb-6">
+                            <div className="w-14 h-14 bg-red-500/20 rounded-full flex items-center justify-center flex-shrink-0 glow-animation">
+                                <Trash2 className="w-7 h-7 text-red-500" />
                             </div>
                             <div>
-                                <h3 className="text-lg font-semibold text-gray-900">Delete Data Source?</h3>
-                                <p className="text-sm text-gray-600">
+                                <h3 className="text-xl font-bold text-white">Delete Data Source?</h3>
+                                <p className="text-sm text-gray-400 mt-1">
                                     {dataSources.find(ds => ds.id === deleteConfirm)?.name}
                                 </p>
                             </div>
                         </div>
 
-                        <p className="text-sm text-gray-700 mb-6">
-                            This action cannot be undone. All data rows and visualizations will be permanently removed.
+                        <p className="text-gray-300 mb-8 leading-relaxed">
+                            This action cannot be undone. All data rows and visualizations will be permanently removed from your workspace.
                         </p>
 
-                        <div className="flex gap-3 justify-end">
+                        <div className="flex gap-4 justify-end">
                             <button
                                 onClick={() => setDeleteConfirm(null)}
                                 disabled={deleting}
-                                className="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg transition disabled:opacity-50"
+                                className="px-5 py-2.5 text-gray-300 hover:text-white hover:bg-white/10 rounded-xl transition disabled:opacity-50"
                             >
                                 Cancel
                             </button>
                             <button
                                 onClick={confirmDelete}
                                 disabled={deleting}
-                                className="px-4 py-2 bg-red-600 text-white font-medium rounded-lg hover:bg-red-700 transition disabled:opacity-50"
+                                className="px-5 py-2.5 bg-gradient-to-r from-red-600 to-pink-600 text-white font-bold rounded-xl hover:shadow-lg hover:shadow-red-500/30 transition disabled:opacity-50"
                             >
                                 {deleting ? 'Deleting...' : 'Delete Permanently'}
                             </button>
@@ -166,21 +173,42 @@ export default function DashboardPage() {
             )}
 
             {/* Header */}
-            <header className="bg-white border-b border-gray-200 sticky top-0 z-10">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                        <img src="/logo.png" alt="DataGenie Logo" className="w-10 h-10 rounded-lg" />
+            <header className="fixed top-0 left-0 right-0 z-50 backdrop-blur-xl border-b border-white/10 bg-gray-950/50">
+                <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+                    <div className="flex items-center gap-4">
+                        <Link href="/" className="group">
+                            <div className="w-10 h-10 btn-gradient-primary rounded-xl flex items-center justify-center group-hover:scale-105 transition-transform duration-300">
+                                <img src="/logo.png" alt="DataGenie Logo" className="w-6 h-6 invert brightness-0" />
+                            </div>
+                        </Link>
                         <div>
-                            <h1 className="text-xl font-bold text-gray-900">DataGenie</h1>
-                            <p className="text-xs text-gray-500">
-                                {user?.email || 'Loading...'}
+                            <h1 className="text-xl font-black tracking-tight text-white group-hover:text-gradient-primary transition-colors cursor-default">
+                                DataGenie
+                            </h1>
+                            <p className="text-xs text-gray-400 font-medium">
+                                {user?.email || 'Welcome Back'}
                             </p>
                         </div>
                     </div>
 
+                    <nav className="hidden md:flex items-center gap-1 bg-white/5 rounded-full p-1 border border-white/5 backdrop-blur-lg">
+                        <Link href="/" className="px-4 py-2 text-sm text-gray-400 hover:text-white hover:bg-white/10 rounded-full transition-all flex items-center gap-2">
+                            <Home className="w-4 h-4" /> Home
+                        </Link>
+                        <Link href="/dashboard" className="px-4 py-2 text-sm text-white bg-white/10 rounded-full transition-all flex items-center gap-2 shadow-sm font-medium">
+                            <Layout className="w-4 h-4" /> Dashboard
+                        </Link>
+                        <Link href="/pricing" className="px-4 py-2 text-sm text-gray-400 hover:text-white hover:bg-white/10 rounded-full transition-all flex items-center gap-2">
+                            <CreditCard className="w-4 h-4" /> Pricing
+                        </Link>
+                        <Link href="/about" className="px-4 py-2 text-sm text-gray-400 hover:text-white hover:bg-white/10 rounded-full transition-all flex items-center gap-2">
+                            <Info className="w-4 h-4" /> About
+                        </Link>
+                    </nav>
+
                     <button
                         onClick={handleLogout}
-                        className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition"
+                        className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-400 hover:text-white hover:bg-white/10 rounded-xl transition-all border border-transparent hover:border-white/10"
                     >
                         <LogOut className="w-4 h-4" />
                         Logout
@@ -189,63 +217,80 @@ export default function DashboardPage() {
             </header>
 
             {/* Main Content */}
-            <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <main className="relative z-10 max-w-7xl mx-auto px-6 pt-32 pb-12">
                 {/* Page Header */}
-                <div className="mb-8">
-                    <h2 className="text-2xl font-bold text-gray-900 mb-2">Dashboard</h2>
-                    <p className="text-gray-600">
-                        Upload your data and get AI-powered insights
+                <div className="mb-12 animate-in slide-in-from-bottom-5 fade-in duration-700">
+                    <h2 className="text-4xl font-black mb-3">
+                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-white to-gray-400">Dashboard</span>
+                    </h2>
+                    <p className="text-gray-400 text-lg max-w-2xl">
+                        Manage your datasets and unleash the power of AI analytics.
                     </p>
                 </div>
 
                 {/* Data Sources List */}
                 {dataSources.length > 0 && !showUpload && (
-                    <div className="mb-6">
-                        <div className="flex items-center justify-between mb-4">
-                            <h3 className="text-lg font-semibold text-gray-900">Your Data Sources</h3>
+                    <div className="mb-12 animate-in slide-in-from-bottom-10 fade-in duration-700 delay-100">
+                        <div className="flex items-center justify-between mb-8">
+                            <h3 className="text-xl font-bold text-white flex items-center gap-2">
+                                <Database className="w-5 h-5 text-indigo-400" />
+                                Your Data Sources
+                            </h3>
                             <button
                                 onClick={() => setShowUpload(true)}
-                                className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition"
+                                className="flex items-center gap-2 px-6 py-3 btn-gradient-primary text-white rounded-xl hover:shadow-lg hover:shadow-indigo-500/25 transition-all duration-300 font-semibold group"
                             >
-                                <Plus className="w-4 h-4" />
+                                <Plus className="w-5 h-5 group-hover:rotate-90 transition-transform duration-300" />
                                 Upload New Data
                             </button>
                         </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                            {dataSources.map((source) => (
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {dataSources.map((source, idx) => (
                                 <div
                                     key={source.id}
-                                    className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-md transition"
+                                    style={{ animationDelay: `${idx * 100}ms` }}
+                                    className="group relative bg-white/5 border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition-all duration-500 cursor-pointer card-3d animate-in fade-in zoom-in fill-mode-backwards"
                                 >
-                                    <div className="flex items-start gap-3">
-                                        <div className="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                                            <Database className="w-5 h-5 text-indigo-600" />
+                                    <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 to-purple-500/5 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+                                    <div
+                                        className="relative z-10"
+                                        onClick={() => router.push(`/dashboard/data/${source.id}`)}
+                                    >
+                                        <div className="flex items-start justify-between mb-6">
+                                            <div className="w-14 h-14 btn-gradient-primary rounded-2xl flex items-center justify-center transform group-hover:scale-110 group-hover:rotate-3 transition-all duration-500 shadow-lg shadow-indigo-500/20">
+                                                <BarChart3 className="w-7 h-7 text-white" />
+                                            </div>
+                                            <button
+                                                onClick={(e) => {
+                                                    e.stopPropagation()
+                                                    handleDeleteDataSource(source.id, source.name)
+                                                }}
+                                                className="p-2.5 text-gray-500 hover:text-red-400 hover:bg-red-500/10 rounded-xl transition-all duration-300 opacity-0 group-hover:opacity-100"
+                                                title="Delete data source"
+                                            >
+                                                <Trash2 className="w-5 h-5" />
+                                            </button>
                                         </div>
-                                        <div
-                                            className="flex-1 min-w-0 cursor-pointer"
-                                            onClick={() => router.push(`/dashboard/data/${source.id}`)}
-                                        >
-                                            <h4 className="font-semibold text-gray-900 truncate mb-1">
-                                                {source.name}
-                                            </h4>
-                                            <p className="text-sm text-gray-600">
+
+                                        <h4 className="text-xl font-bold text-white mb-2 truncate group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-indigo-400 group-hover:to-purple-400 transition-all duration-300">
+                                            {source.name}
+                                        </h4>
+                                        <div className="flex items-center gap-4 text-sm text-gray-400 mb-4">
+                                            <span className="flex items-center gap-1.5 bg-white/5 px-2.5 py-1 rounded-lg border border-white/5">
+                                                <Database className="w-3.5 h-3.5" />
                                                 {source.row_count.toLocaleString()} rows
-                                            </p>
-                                            <p className="text-xs text-gray-500 mt-1">
-                                                {new Date(source.created_at).toLocaleDateString()}
-                                            </p>
+                                            </span>
+                                            <span className="flex items-center gap-1.5 bg-white/5 px-2.5 py-1 rounded-lg border border-white/5">
+                                                <span className="w-1.5 h-1.5 bg-green-500 rounded-full glow-animation"></span>
+                                                Active
+                                            </span>
                                         </div>
-                                        <button
-                                            onClick={(e) => {
-                                                e.stopPropagation()
-                                                handleDeleteDataSource(source.id, source.name)
-                                            }}
-                                            className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition"
-                                            title="Delete data source"
-                                        >
-                                            <Trash2 className="w-4 h-4" />
-                                        </button>
+
+                                        <div className="text-xs text-gray-500 font-medium flex items-center gap-2 pt-4 border-t border-white/5">
+                                            <span>Added {new Date(source.created_at).toLocaleDateString()}</span>
+                                        </div>
                                     </div>
                                 </div>
                             ))}
@@ -255,61 +300,118 @@ export default function DashboardPage() {
 
                 {/* Upload Section */}
                 {(showUpload || dataSources.length === 0) && (
-                    <div className="space-y-6">
+                    <div className="max-w-4xl mx-auto animate-in scale-95 fade-in duration-500">
                         {dataSources.length > 0 && (
                             <button
                                 onClick={() => setShowUpload(false)}
-                                className="text-sm text-gray-600 hover:text-gray-900"
+                                className="mb-6 flex items-center gap-2 text-sm text-gray-400 hover:text-white transition-colors group"
                             >
-                                ← Back to data sources
+                                <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-white/10 transition-colors">
+                                    ←
+                                </div>
+                                Back to dashboard
                             </button>
                         )}
 
-                        <UploadZone onDataParsed={handleDataParsed} />
-
-                        {uploadedData && (
-                            <div className="space-y-4">
-                                <DataTable data={uploadedData} fileName={fileName} />
-
-                                <div className="flex items-center justify-between bg-white border border-gray-200 rounded-lg p-4">
-                                    <div>
-                                        <p className="font-medium text-gray-900">Ready to save?</p>
-                                        <p className="text-sm text-gray-600">
-                                            This will save {uploadedData.length.toLocaleString()} rows to your workspace
-                                        </p>
-                                    </div>
-
-                                    <div className="flex gap-3">
-                                        <button
-                                            onClick={() => {
-                                                setUploadedData(null)
-                                                setFileName('')
-                                            }}
-                                            className="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg transition"
-                                            disabled={saving}
-                                        >
-                                            Cancel
-                                        </button>
-                                        <button
-                                            onClick={handleSaveData}
-                                            disabled={saving}
-                                            className="px-6 py-2 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition"
-                                        >
-                                            {saving ? 'Saving...' : 'Save Data'}
-                                        </button>
-                                    </div>
+                        <div className="bg-gray-900/50 border border-white/10 rounded-3xl p-8 backdrop-blur-sm card-3d">
+                            <div className="mb-8 text-center">
+                                <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-tr from-indigo-500/20 to-purple-500/20 mb-4 glow-animation">
+                                    <Plus className="w-8 h-8 text-indigo-400" />
                                 </div>
-
-                                {error && (
-                                    <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
-                                        {error}
-                                    </div>
-                                )}
+                                <h3 className="text-2xl font-bold text-white mb-2">Upload New Dataset</h3>
+                                <p className="text-gray-400">Supported formats: CSV, Excel (xlsx, xls)</p>
                             </div>
-                        )}
+
+                            <UploadZone onDataParsed={handleDataParsed} />
+
+                            {uploadedData && (
+                                <div className="mt-8 space-y-6 animate-in slide-in-from-bottom-5 fade-in duration-500">
+                                    <div className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden">
+                                        <div className="p-4 border-b border-white/10 flex items-center justify-between">
+                                            <h4 className="font-semibold text-white flex items-center gap-2">
+                                                <Database className="w-4 h-4 text-indigo-400" />
+                                                Data Preview
+                                            </h4>
+                                            <span className="text-xs text-gray-400 bg-white/10 px-2 py-1 rounded-md">
+                                                {uploadedData.length.toLocaleString()} rows detected
+                                            </span>
+                                        </div>
+                                        <div className="max-h-[400px] overflow-auto">
+                                            <DataTable data={uploadedData} fileName={fileName} />
+                                        </div>
+                                    </div>
+
+                                    <div className="flex items-center justify-between bg-gradient-to-r from-indigo-500/10 to-purple-500/10 border border-indigo-500/20 rounded-2xl p-6">
+                                        <div>
+                                            <p className="font-bold text-white text-lg">Ready to analyze?</p>
+                                            <p className="text-sm text-gray-400">
+                                                Import <strong>{fileName}</strong> to start generating insights.
+                                            </p>
+                                        </div>
+
+                                        <div className="flex gap-4">
+                                            <button
+                                                onClick={() => {
+                                                    setUploadedData(null)
+                                                    setFileName('')
+                                                }}
+                                                className="px-6 py-3 text-gray-300 hover:text-white hover:bg-white/10 rounded-xl transition font-medium"
+                                                disabled={saving}
+                                            >
+                                                Cancel
+                                            </button>
+                                            <button
+                                                onClick={handleSaveData}
+                                                disabled={saving}
+                                                className="px-8 py-3 btn-gradient-primary text-white font-bold rounded-xl hover:shadow-lg hover:shadow-indigo-500/25 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                                            >
+                                                {saving ? (
+                                                    <>
+                                                        <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                                                        Saving...
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <RocketIcon className="w-4 h-4" />
+                                                        Launch Analysis
+                                                    </>
+                                                )}
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    {error && (
+                                        <div className="bg-red-500/10 border border-red-500/20 text-red-400 px-6 py-4 rounded-xl flex items-center gap-3 animate-in shake">
+                                            <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
+                                            {error}
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+                        </div>
                     </div>
                 )}
             </main>
         </div>
+    )
+}
+
+function RocketIcon({ className }: { className?: string }) {
+    return (
+        <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className={className}
+        >
+            <path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z" />
+            <path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z" />
+            <path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0" />
+            <path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5" />
+        </svg>
     )
 }
