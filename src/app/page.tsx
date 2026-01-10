@@ -1,23 +1,12 @@
 import Link from "next/link";
 import { ArrowRight, BarChart2, Upload, MessageSquare } from "lucide-react";
+import Navbar from "@/components/navbar";
 
 export default function Home() {
   return (
     <div className="flex flex-col min-h-screen bg-neutral-950 text-neutral-50">
       {/* Navbar */}
-      <header className="px-6 h-16 flex items-center border-b border-neutral-800">
-        <div className="font-bold text-xl tracking-tight flex items-center gap-2">
-          <div className="w-10 h-10 bg-gradient-to-br from-indigo-600 to-cyan-600 rounded-lg flex items-center justify-center">
-            <span className="text-2xl">✨</span>
-          </div>
-          DataGenie
-        </div>
-        <div className="ml-auto flex gap-4 text-sm font-medium text-neutral-400">
-          <Link href="#" className="hover:text-white transition-colors">Features</Link>
-          <Link href="#" className="hover:text-white transition-colors">Pricing</Link>
-          <Link href="/dashboard" className="text-white hover:text-blue-400 transition-colors">Login</Link>
-        </div>
-      </header>
+      <Navbar />
 
       {/* Hero Section */}
       <main className="flex-1 flex flex-col items-center justify-center text-center px-4 py-20">
@@ -40,13 +29,16 @@ export default function Home() {
         <div className="flex flex-col sm:flex-row gap-4">
           <Link
             href="/dashboard"
-            className="inline-flex h-12 items-center justify-center rounded-lg bg-blue-600 px-8 text-sm font-medium text-white shadow-lg shadow-blue-500/20 transition-all hover:bg-blue-500 hover:scale-105 hover:shadow-blue-500/40"
+            className="inline-flex h-12 items-center justify-center rounded-xl btn-gradient-primary px-8 text-sm font-semibold text-white"
           >
             Get Started <ArrowRight className="ml-2 h-4 w-4" />
           </Link>
-          <button className="inline-flex h-12 items-center justify-center rounded-lg border border-neutral-800 bg-neutral-900 px-8 text-sm font-medium text-neutral-300 transition-all hover:bg-neutral-800 hover:text-white">
-            View Design System
-          </button>
+          <Link
+            href="#features"
+            className="inline-flex h-12 items-center justify-center rounded-xl border-2 border-neutral-700 bg-neutral-900/50 px-8 text-sm font-medium text-neutral-300 transition-all hover:bg-neutral-800 hover:text-white hover:border-neutral-600"
+          >
+            Explore Features
+          </Link>
         </div>
 
         {/* Feature Grid */}
