@@ -13,6 +13,7 @@ export default function Navbar() {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
     const [user, setUser] = useState<any>(null)
     const [loading, setLoading] = useState(true)
+    const [imageError, setImageError] = useState(false)
 
     const pathname = usePathname()
     const router = useRouter()
