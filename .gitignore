@@ -45,3 +45,7 @@ next-env.d.ts
 
 # Artifacts (planning docs - optional, remove if you want to commit them)
 .gemini/
+
+# Internal Documentation
+PROJECT_MASTER_PLAN.md
+

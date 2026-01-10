@@ -78,10 +78,9 @@ export default function Navbar() {
                 {/* Logo */}
                 <Link href="/" className="flex items-center gap-3 group">
                     <div className="relative">
-                        <div className="absolute inset-0 bg-indigo-500 blur-lg opacity-20 group-hover:opacity-40 transition-opacity duration-300 rounded-full" />
-                        <div className="relative w-10 h-10 btn-gradient-primary rounded-xl flex items-center justify-center group-hover:scale-105 transition-transform duration-300 shadow-lg shadow-indigo-500/20 border border-white/10">
-                            {/* Replaced img with a cleaner icon composition if image fails, but using image as requested */}
-                            <img src="/logo.png" alt="DataGenie" className="w-8 h-8 object-contain" />
+                        <div className="absolute inset-0 bg-white/20 blur-lg opacity-20 group-hover:opacity-40 transition-opacity duration-300 rounded-xl" />
+                        <div className="relative w-10 h-10 bg-white rounded-xl flex items-center justify-center group-hover:scale-105 transition-transform duration-300 shadow-lg shadow-white/10 overflow-hidden">
+                            <img src="/logo.png" alt="DataGenie" className="w-full h-full object-cover" />
                         </div>
                     </div>
                     <span className="font-bold text-xl text-white group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-indigo-400 group-hover:to-purple-400 transition-all duration-300">
