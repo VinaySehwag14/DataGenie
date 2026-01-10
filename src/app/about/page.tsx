@@ -4,10 +4,7 @@ import Navbar from '@/components/navbar'
 
 export default function AboutPage() {
     return (
-        <div className="min-h-screen bg-neutral-950 text-neutral-50">
-            {/* Navbar */}
-            {/* Navbar */}
-            <Navbar />
+        <div className="min-h-screen bg-neutral-950 text-neutral-50 pt-20">
 
             {/* Hero */}
             <section className="py-20 px-6">
@@ -128,11 +125,6 @@ export default function AboutPage() {
             </section>
 
             {/* Footer */}
-            <footer className="border-t border-neutral-800 py-8">
-                <div className="max-w-7xl mx-auto px-6 text-center text-gray-500">
-                    <p>&copy; 2024 DataGenie MVP. Built with ❤️ in India</p>
-                </div>
-            </footer>
         </div>
     )
 }

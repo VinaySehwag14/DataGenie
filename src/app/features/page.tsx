@@ -2,59 +2,76 @@
 
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { ArrowRight, BarChart3, Bot, FileText, Layout, Lock, Share2, Sparkles, Zap } from 'lucide-react'
-import Navbar from "@/components/navbar"
+import { ArrowRight, BarChart3, Bot, FileText, Layout, Lock, Share2, Sparkles, Zap, Database, Wand2 } from 'lucide-react'
+import { motion } from 'framer-motion'
+import { fadeIn, slideUp, staggerContainer } from '@/lib/animations'
 
 export default function FeaturesPage() {
     const router = useRouter()
 
     return (
-        <div className="min-h-screen bg-neutral-950 text-neutral-50 selection:bg-indigo-500/30">
+        <div className="min-h-screen bg-neutral-950 text-neutral-50 selection:bg-indigo-500/30 overflow-hidden">
             {/* Background Effects */}
             <div className="fixed inset-0 z-0 pointer-events-none">
                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_-20%,rgba(120,119,198,0.3),rgba(255,255,255,0))]"></div>
                 <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:50px_50px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)]"></div>
             </div>
 
-            {/* Navbar Placeholder - Will be improved globally later */}
-            {/* Navbar */}
-            <Navbar />
-
             <main className="relative z-10 pt-32 pb-20 px-6">
                 {/* Hero */}
-                <div className="max-w-4xl mx-auto text-center mb-24">
-                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 text-indigo-400 text-sm font-medium mb-6 border border-indigo-500/20 animate-in fade-in zoom-in duration-500">
+                <motion.div
+                    initial="hidden"
+                    animate="show"
+                    variants={staggerContainer}
+                    className="max-w-4xl mx-auto text-center mb-24"
+                >
+                    <motion.div variants={fadeIn} className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 text-indigo-400 text-sm font-medium mb-6 border border-indigo-500/20">
                         <Sparkles className="w-4 h-4" />
                         <span>Powered by Advanced AI</span>
-                    </div>
-                    <h1 className="text-5xl md:text-7xl font-black tracking-tight mb-8">
+                    </motion.div>
+
+                    <motion.h1 variants={slideUp} className="text-5xl md:text-7xl font-black tracking-tight mb-8">
                         <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-white to-gray-400">Powerful Features</span><br />
                         <span className="text-gradient-primary">for Modern Teams.</span>
-                    </h1>
-                    <p className="text-xl text-gray-400 max-w-2xl mx-auto leading-relaxed">
+                    </motion.h1>
+
+                    <motion.p variants={fadeIn} className="text-xl text-gray-400 max-w-2xl mx-auto leading-relaxed">
                         Everything you need to transform raw data into actionable business intelligence. No coding required.
-                    </p>
-                </div>
+                    </motion.p>
+                </motion.div>
 
                 {/* Main Features Grid */}
-                <div className="max-w-7xl mx-auto grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-24">
+                <motion.div
+                    initial="hidden"
+                    whileInView="show"
+                    viewport={{ once: true, margin: "-100px" }}
+                    variants={staggerContainer}
+                    className="max-w-7xl mx-auto grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-24"
+                >
                     {features.map((feature, idx) => (
-                        <div
+                        <motion.div
                             key={idx}
-                            className="bg-white/5 border border-white/10 p-8 rounded-3xl hover:bg-white/10 transition-all duration-300 group card-3d"
+                            variants={fadeIn}
+                            className="bg-white/5 border border-white/10 p-8 rounded-3xl hover:bg-white/10 transition-all duration-300 group card-3d hover:-translate-y-2"
                         >
                             <div className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-6 bg-gradient-to-br ${feature.gradient} group-hover:scale-110 transition-transform duration-300 shadow-lg`}>
                                 <feature.icon className="w-7 h-7 text-white" />
                             </div>
                             <h3 className="text-xl font-bold text-white mb-3 group-hover:text-gradient-primary transition-colors">{feature.title}</h3>
                             <p className="text-gray-400 leading-relaxed">{feature.description}</p>
-                        </div>
+                        </motion.div>
                     ))}
-                </div>
+                </motion.div>
 
                 {/* Deep Dive Section */}
                 <div className="max-w-7xl mx-auto mb-24">
-                    <div className="bg-gradient-to-br from-indigo-900/20 to-purple-900/20 border border-white/10 rounded-3xl p-8 md:p-12 backdrop-blur-sm overflow-hidden relative">
+                    <motion.div
+                        initial={{ opacity: 0, y: 40 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.8 }}
+                        className="bg-gradient-to-br from-indigo-900/20 to-purple-900/20 border border-white/10 rounded-3xl p-8 md:p-12 backdrop-blur-sm overflow-hidden relative"
+                    >
                         <div className="absolute top-0 right-0 p-12 opacity-10 pointer-events-none">
                             <Bot className="w-96 h-96 text-indigo-500" />
                         </div>
@@ -76,20 +93,22 @@ export default function FeaturesPage() {
                                     ].map((item, i) => (
                                         <li key={i} className="flex items-center gap-3 text-gray-300">
                                             <div className="w-6 h-6 rounded-full bg-green-500/20 flex items-center justify-center flex-shrink-0">
-                                                <svg className="w-3.5 h-3.5 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                                                </svg>
+                                                <Wand2 className="w-3.5 h-3.5 text-green-400" />
                                             </div>
                                             {item}
                                         </li>
                                     ))}
                                 </ul>
-                                <button onClick={() => router.push('/dashboard')} className="btn-gradient-primary px-8 py-3 rounded-xl font-bold text-white shadow-lg hover:shadow-indigo-500/25 transition-all">
+                                <button onClick={() => router.push('/dashboard')} className="btn-gradient-primary px-8 py-3 rounded-xl font-bold text-white shadow-lg hover:shadow-indigo-500/25 transition-all hover:scale-105">
                                     Try AI Analysis Now
                                 </button>
                             </div>
-                            <div className="relative">
-                                <div className="bg-gray-900 border border-white/10 rounded-xl p-6 shadow-2xl transform rotate-3 hover:rotate-0 transition-transform duration-500">
+                            <div className="relative perspective-1000">
+                                <motion.div
+                                    animate={{ rotateY: [-5, 5, -5], rotateX: [2, -2, 2] }}
+                                    transition={{ repeat: Infinity, duration: 8, ease: "easeInOut" }}
+                                    className="bg-gray-900 border border-white/10 rounded-xl p-6 shadow-2xl"
+                                >
                                     <div className="flex items-start gap-4 mb-4">
                                         <div className="w-10 h-10 rounded-full bg-indigo-600 flex items-center justify-center flex-shrink-0">
                                             <Bot className="w-6 h-6 text-white" />
@@ -104,29 +123,30 @@ export default function FeaturesPage() {
                                         <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
                                         <span className="text-xs text-gray-500">AI is online and analyzing</span>
                                     </div>
-                                </div>
+                                </motion.div>
                             </div>
                         </div>
-                    </div>
+                    </motion.div>
                 </div>
 
                 {/* CTA */}
-                <div className="max-w-4xl mx-auto text-center">
+                <motion.div
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
+                    viewport={{ once: true }}
+                    className="max-w-4xl mx-auto text-center"
+                >
                     <h2 className="text-4xl font-bold mb-6">
                         Ready to empower your team?
                     </h2>
                     <p className="text-xl text-gray-400 mb-8">
                         Join thousands of users who are making better decisions with DataGenie.
                     </p>
-                    <button onClick={() => router.push('/dashboard')} className="inline-flex items-center gap-2 px-8 py-4 bg-white text-gray-950 rounded-xl font-bold text-lg hover:bg-gray-100 transition-colors">
+                    <button onClick={() => router.push('/dashboard')} className="inline-flex items-center gap-2 px-8 py-4 bg-white text-gray-950 rounded-xl font-bold text-lg hover:bg-gray-100 transition-colors hover:scale-105">
                         Start for Free <ArrowRight className="w-5 h-5" />
                     </button>
-                </div>
+                </motion.div>
             </main>
-
-            <footer className="border-t border-white/10 py-8 text-center text-gray-500 text-sm relative z-10">
-                <p>&copy; 2024 DataGenie. All rights reserved.</p>
-            </footer>
         </div>
     )
 }

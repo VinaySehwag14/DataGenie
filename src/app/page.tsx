@@ -31,7 +31,7 @@ export default function Home() {
             Get Started <ArrowRight className="ml-2 h-4 w-4" />
           </Link>
           <Link
-            href="#features"
+            href="/features"
             className="inline-flex h-12 items-center justify-center rounded-xl border-2 border-neutral-700 bg-neutral-900/50 px-8 text-sm font-medium text-neutral-300 transition-all hover:bg-neutral-800 hover:text-white hover:border-neutral-600"
           >
             Explore Features
