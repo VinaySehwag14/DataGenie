@@ -127,7 +127,7 @@ export default function DashboardPage() {
         <div className="min-h-screen bg-gray-50">
             {/* Delete Confirmation Modal */}
             {deleteConfirm && (
-                <div className="fixed inset-0 bg-gray-900 bg-opacity-10 flex items-center justify-center z-50 p-4">
+                <div className="fixed inset-0 backdrop-blur-sm bg-white/30 flex items-center justify-center z-50 p-4">
                     <div className="bg-white rounded-xl shadow-2xl max-w-md w-full p-6 animate-in fade-in duration-200">
                         <div className="flex items-center gap-3 mb-4">
                             <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center flex-shrink-0">
