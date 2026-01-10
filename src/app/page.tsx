@@ -7,10 +7,10 @@ export default function Home() {
       {/* Navbar */}
       <header className="px-6 h-16 flex items-center border-b border-neutral-800">
         <div className="font-bold text-xl tracking-tight flex items-center gap-2">
-          <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-            <BarChart2 className="w-5 h-5 text-white" />
+          <div className="w-10 h-10 bg-gradient-to-br from-indigo-600 to-cyan-600 rounded-lg flex items-center justify-center">
+            <span className="text-2xl">✨</span>
           </div>
-          InsightPilot Pro
+          DataGenie
         </div>
         <div className="ml-auto flex gap-4 text-sm font-medium text-neutral-400">
           <Link href="#" className="hover:text-white transition-colors">Features</Link>
@@ -28,18 +28,17 @@ export default function Home() {
           </span>
           Next-Gen Contextual Analytics
         </div>
-        
-        <h1 className="text-5xl md:text-7xl font-bold tracking-tight mb-6 max-w-4xl bg-clip-text text-transparent bg-gradient-to-b from-white to-neutral-500">
-          Unlock Insights from Your Data in Seconds
+
+        <h1 className="text-7xl font-black tracking-tight mb-6 bg-gradient-to-b from-white to-neutral-400 bg-clip-text text-transparent">
+          Your Data's Genie,<br /> At Your Command
         </h1>
-        
-        <p className="text-lg md:text-xl text-neutral-400 max-w-2xl mb-10 leading-relaxed">
-          Upload your CSV or JSON files and get instant, AI-powered interactive dashboards. 
-          Chat with your data to uncover hidden trends.
+
+        <p className="text-xl text-neutral-400 mb-10 max-w-2xl leading-relaxed">
+          DataGenie transforms raw data into magical insights. Upload CSV files, visualize with stunning charts, and ask your AI-powered genie anything about your data.
         </p>
 
         <div className="flex flex-col sm:flex-row gap-4">
-          <Link 
+          <Link
             href="/dashboard"
             className="inline-flex h-12 items-center justify-center rounded-lg bg-blue-600 px-8 text-sm font-medium text-white shadow-lg shadow-blue-500/20 transition-all hover:bg-blue-500 hover:scale-105 hover:shadow-blue-500/40"
           >
@@ -52,17 +51,17 @@ export default function Home() {
 
         {/* Feature Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-24 max-w-6xl w-full text-left">
-          <FeatureCard 
+          <FeatureCard
             icon={<Upload className="w-6 h-6 text-blue-400" />}
             title="Instant Upload"
             description="Drag & drop CSV or JSON files. Our engine parses and visualizes your data instantly."
           />
-          <FeatureCard 
+          <FeatureCard
             icon={<BarChart2 className="w-6 h-6 text-purple-400" />}
             title="Interactive Charts"
             description="Dynamic charts that react to your filters. Zoom, pan, and explore your metrics."
           />
-          <FeatureCard 
+          <FeatureCard
             icon={<MessageSquare className="w-6 h-6 text-emerald-400" />}
             title="AI Data Chat"
             description="Ask questions in plain English. 'What was the highest sales month?' — Get answers."

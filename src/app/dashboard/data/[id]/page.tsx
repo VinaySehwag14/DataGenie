@@ -9,6 +9,7 @@ import { LineChartComponent } from '@/components/dashboard/charts/line-chart'
 import { PieChartComponent } from '@/components/dashboard/charts/pie-chart'
 import { analyzeDataForChart } from '@/lib/charts/analyzer'
 import { ChatInterface } from '@/components/dashboard/chat-interface'
+import { InsightsPanel } from '@/components/dashboard/insights-panel'
 
 export default async function DataSourcePage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params
@@ -127,6 +128,11 @@ function DataSourcePageClient({ id }: { id: string }) {
                         </div>
                     </div>
                 )}
+
+                {/* Auto-Generated Insights */}
+                <div className="mb-8">
+                    <InsightsPanel dataSourceId={id} />
+                </div>
 
                 {/* AI Chat Interface */}
                 <div className="mb-8">

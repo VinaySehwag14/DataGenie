@@ -1,4 +1,34 @@
-# InsightsPro 🚀
+# DataGenie 🧞‍♂️✨
+
+**AI-Powered Analytics Made Magical**
+
+Transform your raw data into actionable insights with the power of AI. DataGenie lets you upload CSV files, visualize data with beautiful charts, and chat with your data in plain English.
+
+## 🌟 Features
+
+### Currently Available
+- ✅ **Authentication**: Secure login/signup with Supabase Auth
+- ✅ **CSV Upload**: Drag & drop CSV files with instant parsing
+- ✅ **Data Preview**: View uploaded data in clean tables
+- ✅ **Interactive Charts**: Auto-generated bar, line, and pie charts
+- ✅ **AI Chat**: Ask questions about your data in natural language
+- ✅ **Smart Suggestions**: Contextual question recommendations
+- ✅ **Auto-Insights**: Automatic statistical analysis and key findings
+
+### Tech Stack
+- **Frontend**: Next.js 16, React 19, TypeScript, Tailwind CSS
+- **Database**: Supabase (PostgreSQL + Auth + RLS)
+- **AI**: Google Gemini (2.5-flash)
+- **Charts**: Recharts
+- **State**: Zustand
+- **CSV Parsing**: PapaParse
+
+## 🚀 Quick Start
+
+```bash
+# Clone the repository
+git clone https://github.com/VinaySehwag14/datagenie.git
+cd datagenie
 
 AI-powered Business Intelligence platform for Indian small businesses. Upload your data, ask questions in plain English, get instant insights.
 

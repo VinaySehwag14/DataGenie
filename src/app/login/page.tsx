@@ -50,7 +50,7 @@ export default function LoginPage() {
             <div className="max-w-md w-full">
                 <div className="text-center mb-8">
                     <h1 className="text-4xl font-bold bg-gradient-to-r from-indigo-600 to-pink-600 bg-clip-text text-transparent mb-2">
-                        InsightsPro
+                        DataGenie
                     </h1>
                     <p className="text-gray-600">AI-powered analytics for your business</p>
                 </div>

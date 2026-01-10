@@ -72,7 +72,7 @@ export default function SignupPage() {
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                         </svg>
                     </div>
-                    <h2 className="text-2xl font-bold text-gray-900 mb-2">Welcome to InsightsPro!</h2>
+                    <h2 className="text-2xl font-bold text-gray-900 mb-2">Welcome to DataGenie!</h2>
                     <p className="text-gray-600">Redirecting to dashboard...</p>
                 </div>
             </div>
@@ -84,7 +84,7 @@ export default function SignupPage() {
             <div className="max-w-md w-full">
                 <div className="text-center mb-8">
                     <h1 className="text-4xl font-bold bg-gradient-to-r from-indigo-600 to-pink-600 bg-clip-text text-transparent mb-2">
-                        InsightsPro
+                        DataGenie
                     </h1>
                     <p className="text-gray-600">Start analyzing your data with AI</p>
                 </div>
