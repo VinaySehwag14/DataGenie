@@ -1,15 +1,13 @@
 import jsPDF from 'jspdf'
-import html2canvas from 'html2canvas'
 
 interface PDFExportOptions {
     dataSourceName: string
     data: any[]
     insights?: any[]
-    chartElements?: HTMLElement[]
 }
 
 export async function exportToPDF(options: PDFExportOptions) {
-    const { dataSourceName, data, insights = [], chartElements = [] } = options
+    const { dataSourceName, data, insights = [] } = options
 
     const doc = new jsPDF({
         orientation: 'portrait',
@@ -19,32 +17,23 @@ export async function exportToPDF(options: PDFExportOptions) {
 
     let yPos = 20
 
-    // ===== PAGE 1: HEADER & EXECUTIVE SUMMARY =====
+    // ===== HEADER =====
     doc.setFillColor(99, 102, 241)
     doc.rect(0, 0, 210, 45, 'F')
-
-    // Logo circle
-    doc.setFillColor(255, 255, 255, 0.2)
-    doc.circle(25, 22, 8, 'F')
-    doc.setFillColor(255, 255, 255)
-    doc.circle(25, 22, 6, 'F')
-    doc.setFontSize(10)
-    doc.setTextColor(99, 102, 241)
-    doc.setFont('helvetica', 'bold')
-    doc.text('DG', 21, 24)
 
     // Brand name
     doc.setTextColor(255, 255, 255)
     doc.setFontSize(28)
     doc.setFont('helvetica', 'bold')
-    doc.text('DataGenie', 38, 25)
+    doc.text('DataGenie', 20, 25)
 
     doc.setFontSize(13)
     doc.setFont('helvetica', 'normal')
-    doc.text('Comprehensive Analytics Report', 38, 35)
+    doc.text('Business Analytics Report', 20, 35)
 
     yPos = 60
 
+    // Report Title
     doc.setTextColor(0, 0, 0)
     doc.setFontSize(22)
     doc.setFont('helvetica', 'bold')
@@ -62,7 +51,7 @@ export async function exportToPDF(options: PDFExportOptions) {
 
     yPos += 15
 
-    // Executive Summary
+    // ===== EXECUTIVE SUMMARY =====
     doc.setFontSize(16)
     doc.setFont('helvetica', 'bold')
     doc.setTextColor(0, 0, 0)
@@ -81,25 +70,24 @@ export async function exportToPDF(options: PDFExportOptions) {
     const columns = Object.keys(data[0] || {})
     const numericCols = columns.filter(col => !isNaN(parseFloat(data[0]?.[col])))
 
-    doc.text(`Dataset Size: ${totalRecords.toLocaleString()} records analyzed`, 25, yPos)
+    doc.text(`Dataset: ${totalRecords.toLocaleString()} records analyzed across ${columns.length} dimensions`, 25, yPos)
     yPos += 6
-    doc.text(`Dimensions: ${columns.length} fields including ${numericCols.length} metrics`, 25, yPos)
+    doc.text(`Metrics: ${numericCols.length} quantitative KPIs tracked and analyzed`, 25, yPos)
     yPos += 6
-    doc.text(`Key insights identified: ${insights.length} actionable findings`, 25, yPos)
+    doc.text(`Insights: ${insights.length} key findings identified with actionable recommendations`, 25, yPos)
     yPos += 6
-    doc.text(`Analysis includes trend detection, top performers, and opportunities`, 25, yPos)
+    doc.text(`Analysis: Trends, performance, and growth opportunities highlighted below`, 25, yPos)
 
     yPos += 20
 
-    // Key Metrics Highlights
+    // ===== KEY METRICS GRID =====
     doc.setFontSize(16)
     doc.setFont('helvetica', 'bold')
     doc.setTextColor(0, 0, 0)
-    doc.text('Key Metrics at a Glance', 20, yPos)
+    doc.text('Key Performance Indicators', 20, yPos)
 
     yPos += 10
 
-    // Display insights in a grid
     insights.slice(0, 6).forEach((insight, idx) => {
         const col = idx % 2
         const row = Math.floor(idx / 2)
@@ -107,17 +95,14 @@ export async function exportToPDF(options: PDFExportOptions) {
         const x = 20 + (col * 90)
         const y = yPos + (row * 25)
 
-        // Box
         doc.setFillColor(249, 250, 251)
         doc.roundedRect(x, y - 5, 85, 20, 2, 2, 'F')
 
-        // Title
         doc.setFontSize(9)
         doc.setFont('helvetica', 'bold')
         doc.setTextColor(100, 100, 100)
         doc.text(insight.title, x + 4, y)
 
-        // Value
         doc.setFontSize(16)
         doc.setFont('helvetica', 'bold')
         doc.setTextColor(0, 0, 0)
@@ -134,29 +119,25 @@ export async function exportToPDF(options: PDFExportOptions) {
     doc.setFontSize(18)
     doc.setFont('helvetica', 'bold')
     doc.setTextColor(0, 0, 0)
-    doc.text('Detailed Analysis', 20, yPos)
+    doc.text('Performance Breakdown', 20, yPos)
 
     yPos += 15
 
-    // Analyze data for breakdowns
     if (data.length > 0) {
-        // Find categorical columns
         const categoricalCols = columns.filter(col => {
             const uniqueVals = [...new Set(data.map(row => row[col]))]
             return uniqueVals.length > 1 && uniqueVals.length <= 20 && isNaN(parseFloat(data[0][col]))
         })
 
-        // Find numeric columns
         const metricCols = columns.filter(col => !isNaN(parseFloat(data[0]?.[col])))
 
         if (categoricalCols.length > 0 && metricCols.length > 0) {
             const categoryCol = categoricalCols[0]
             const metricCol = metricCols[0]
 
-            // Breakdown by category
             doc.setFontSize(14)
             doc.setFont('helvetica', 'bold')
-            doc.text(`Performance by ${categoryCol}`, 20, yPos)
+            doc.text(`${metricCol} by ${categoryCol}`, 20, yPos)
 
             yPos += 10
 
@@ -182,64 +163,85 @@ export async function exportToPDF(options: PDFExportOptions) {
                     yPos = 20
                 }
 
-                // Bar visualization
-                const maxVal = sorted[0][1]
-                const barWidth = (value / maxVal) * 120
+                // Rank
+                doc.setFont('helvetica', 'bold')
+                doc.setTextColor(60, 60, 60)
+                doc.text(`${idx + 1}.`, 25, yPos)
 
-                doc.setFillColor(99, 102, 241, 0.3)
-                doc.rect(60, yPos - 4, barWidth, 6, 'F')
-
+                // Category
+                doc.setFont('helvetica', 'normal')
                 doc.setTextColor(0, 0, 0)
-                doc.text(`${idx + 1}. ${category}`, 25, yPos)
+                const catText = category.length > 15 ? category.substring(0, 13) + '..' : category
+                doc.text(catText, 32, yPos)
+
+                // Value
+                doc.setFont('helvetica', 'bold')
                 doc.text(value.toLocaleString('en-IN'), 185, yPos, { align: 'right' })
 
-                yPos += 8
+                // COLORFUL BAR BELOW TEXT
+                const maxVal = sorted[0][1]
+                const barWidth = Math.max((value / maxVal) * 110, 3)
+                const colors = [
+                    [99, 102, 241],   // Indigo
+                    [139, 92, 246],   // Purple  
+                    [236, 72, 153],   // Pink
+                    [59, 130, 246],   // Blue
+                    [16, 185, 129],   // Green
+                ]
+                const color = colors[idx % colors.length]
+                doc.setFillColor(color[0], color[1], color[2])
+                doc.rect(32, yPos + 2, barWidth, 5, 'F')
+
+                yPos += 12
             })
         }
     }
 
-    // Top Performers
+    // Business Insights Section
     yPos += 10
-    if (yPos > 250) {
+    if (yPos > 240) {
         doc.addPage()
         yPos = 20
     }
 
-    doc.setFontSize(14)
+    doc.setFontSize(16)
     doc.setFont('helvetica', 'bold')
     doc.setTextColor(0, 0, 0)
-    doc.text('Top Performers', 20, yPos)
+    doc.text('Business Insights', 20, yPos)
 
     yPos += 10
 
-    const topInsights = insights.filter(i => i.type === 'top').slice(0, 3)
-    topInsights.forEach(insight => {
-        if (yPos > 265) {
+    // Generate smart business insights
+    const businessInsights = generateBusinessInsights(data, insights)
+
+    businessInsights.forEach((insight, idx) => {
+        if (yPos > 260) {
             doc.addPage()
             yPos = 20
         }
 
-        // Light green background (not dark!)
-        doc.setFillColor(220, 252, 231)
-        doc.roundedRect(20, yPos - 5, 170, 18, 2, 2, 'F')
+        const color = insight.color === 'green' ? [16, 185, 129] :
+            insight.color === 'yellow' ? [245, 158, 11] :
+                insight.color === 'red' ? [239, 68, 68] : [99, 102, 241]
 
-        // Green dot indicator
-        doc.setFillColor(16, 185, 129)
-        doc.circle(27, yPos + 3, 3, 'F')
+        doc.setFillColor(color[0], color[1], color[2], 0.1)
+        doc.roundedRect(20, yPos - 5, 170, insight.lines * 6 + 8, 2, 2, 'F')
 
-        // Title and value
-        doc.setFontSize(12)
+        doc.setFillColor(color[0], color[1], color[2])
+        doc.circle(27, yPos + 2, 3, 'F')
+
+        doc.setFontSize(11)
         doc.setFont('helvetica', 'bold')
         doc.setTextColor(0, 0, 0)
-        doc.text(`${insight.title}: ${insight.value}`, 35, yPos + 2)
+        doc.text(insight.title, 35, yPos)
 
-        // Description with numbers 
         doc.setFontSize(9)
         doc.setFont('helvetica', 'normal')
         doc.setTextColor(60, 60, 60)
-        doc.text(insight.description, 35, yPos + 9)
+        const lines = doc.splitTextToSize(insight.description, 150)
+        doc.text(lines, 35, yPos + 6)
 
-        yPos += 22
+        yPos += insight.lines * 6 + 12
     })
 
     // ===== PAGE 3: RECOMMENDATIONS =====
@@ -253,28 +255,7 @@ export async function exportToPDF(options: PDFExportOptions) {
 
     yPos += 15
 
-    const recommendations = [
-        {
-            title: 'Focus on High Performers',
-            desc: `Based on analysis, your top performers are driving significant value. Consider allocating more resources to these areas.`,
-            priority: 'High'
-        },
-        {
-            title: 'Address Data Gaps',
-            desc: `Ensure data quality and completeness across all ${columns.length} dimensions for more accurate insights.`,
-            priority: 'Medium'
-        },
-        {
-            title: 'Monitor Trends',
-            desc: `Set up regular monitoring dashboards to track changes in key metrics over time.`,
-            priority: 'Medium'
-        },
-        {
-            title: 'Leverage AI Chat',
-            desc: `Use DataGenie's AI chat feature to ask specific questions and dig deeper into the data.`,
-            priority: 'Low'
-        }
-    ]
+    const recommendations = generateRecommendations(data, insights)
 
     recommendations.forEach((rec, idx) => {
         if (yPos > 250) {
@@ -282,14 +263,9 @@ export async function exportToPDF(options: PDFExportOptions) {
             yPos = 20
         }
 
-        const priorityColors: { [key: string]: number[] } = {
-            'High': [239, 68, 68],
-            'Medium': [245, 158, 11],
-            'Low': [59, 130, 246]
-        }
-        const color = priorityColors[rec.priority] || [100, 100, 100]
+        const color = rec.priority === 'High' ? [239, 68, 68] :
+            rec.priority === 'Medium' ? [245, 158, 11] : [59, 130, 246]
 
-        // Number circle
         doc.setFillColor(color[0], color[1], color[2])
         doc.circle(27, yPos + 1, 4, 'F')
         doc.setFontSize(10)
@@ -297,60 +273,24 @@ export async function exportToPDF(options: PDFExportOptions) {
         doc.setFont('helvetica', 'bold')
         doc.text(String(idx + 1), 26, yPos + 3)
 
-        // Title
         doc.setFontSize(12)
         doc.setTextColor(0, 0, 0)
         doc.text(rec.title, 35, yPos + 2)
 
-        // Priority badge
         doc.setFontSize(8)
         doc.setTextColor(color[0], color[1], color[2])
         doc.text(`[${rec.priority} Priority]`, 160, yPos + 2)
 
-        // Description
         doc.setFontSize(10)
         doc.setFont('helvetica', 'normal')
         doc.setTextColor(60, 60, 60)
-        const lines = doc.splitTextToSize(rec.desc, 155)
+        const lines = doc.splitTextToSize(rec.description, 155)
         doc.text(lines, 35, yPos + 8)
 
         yPos += 8 + (lines.length * 5) + 10
     })
 
-    // Next Steps
-    yPos += 10
-    if (yPos > 250) {
-        doc.addPage()
-        yPos = 20
-    }
-
-    doc.setFillColor(254, 243, 199)
-    doc.roundedRect(20, yPos - 5, 170, 35, 2, 2, 'F')
-
-    doc.setFontSize(12)
-    doc.setFont('helvetica', 'bold')
-    doc.setTextColor(0, 0, 0)
-    doc.text('Next Steps', 25, yPos)
-
-    yPos += 7
-
-    doc.setFontSize(10)
-    doc.setFont('helvetica', 'normal')
-    doc.setTextColor(60, 60, 60)
-
-    const nextSteps = [
-        '1. Review the findings and share with your team',
-        '2. Download the CSV for detailed analysis in Excel',
-        '3. Use AI Chat to explore specific questions',
-        '4. Set up regular data updates to track progress'
-    ]
-
-    nextSteps.forEach(step => {
-        doc.text(step, 30, yPos)
-        yPos += 6
-    })
-
-    // Footer on all pages
+    // Footer
     const totalPages = doc.getNumberOfPages()
     for (let i = 1; i <= totalPages; i++) {
         doc.setPage(i)
@@ -362,7 +302,75 @@ export async function exportToPDF(options: PDFExportOptions) {
         doc.text('Powered by DataGenie', 190, 288, { align: 'right' })
     }
 
-    // Save
     const filename = `${dataSourceName.replace(/\s+/g, '_')}_analysis.pdf`
     doc.save(filename)
+}
+
+// Generate business insights
+function generateBusinessInsights(data: any[], insights: any[]) {
+    const businessInsights = []
+
+    // Growth opportunity
+    if (data.length > 0) {
+        const columns = Object.keys(data[0])
+        const numericCols = columns.filter(col => !isNaN(parseFloat(data[0][col])))
+
+        if (numericCols.length > 0) {
+            businessInsights.push({
+                title: 'Growth Opportunity',
+                description: `Your data shows ${numericCols.length} revenue/performance metrics. Focus on the top performers to maximize ROI and scale winning strategies.`,
+                color: 'green',
+                lines: 2
+            })
+        }
+    }
+
+    // Data quality
+    businessInsights.push({
+        title: 'Data Quality',
+        description: `Dataset contains ${data.length.toLocaleString()} records. Ensure data accuracy through regular validation to maintain reliable insights and decision-making.`,
+        color: 'blue',
+        lines: 2
+    })
+
+    // Competitive advantage
+    businessInsights.push({
+        title: 'Competitive Edge',
+        description: `Use these insights to identify market trends early, optimize resource allocation, and make data-driven decisions faster than competitors.`,
+        color: 'green',
+        lines: 2
+    })
+
+    return businessInsights
+}
+
+// Generate recommendations
+function generateRecommendations(data: any[], insights: any[]) {
+    return [
+        {
+            title: 'Leverage Top Performers',
+            description: `Analyze your highest-performing categories and double down on what works. Allocate more resources to proven winners.`,
+            priority: 'High'
+        },
+        {
+            title: 'Monitor Key Metrics Weekly',
+            description: `Set up regular data updates to track trends. Early detection of changes helps you pivot quickly and stay ahead.`,
+            priority: 'High'
+        },
+        {
+            title: 'Identify Underperformers',
+            description: `Look for categories or segments with low performance. Investigate root causes and either optimize or reallocate resources.`,
+            priority: 'Medium'
+        },
+        {
+            title: 'Use AI Chat for Deep Dives',
+            description: `Ask specific questions using DataGenie's AI chat to uncover hidden patterns and get instant answers from your data.`,
+            priority: 'Medium'
+        },
+        {
+            title: 'Share Insights with Team',
+            description: `Distribute this report to stakeholders. Data-driven alignment across teams leads to better execution and results.`,
+            priority: 'Low'
+        }
+    ]
 }

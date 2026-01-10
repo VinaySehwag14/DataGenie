@@ -70,7 +70,7 @@ export default function Home() {
       </main>
 
       <footer className="py-8 text-center text-neutral-600 text-sm border-t border-neutral-800">
-        © {new Date().getFullYear()} InsightPilot Pro. Built with Next.js & Gemini AI.
+        © {new Date().getFullYear()} Data Genie. Built with Next.js & Gemini AI.
       </footer>
     </div>
   );
