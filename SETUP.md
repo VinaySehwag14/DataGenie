@@ -37,11 +37,36 @@ cp .env.local.example .env.local
    - Click "Run" (or press Cmd/Ctrl + Enter)
    - You should see "Success. No rows returned"
 
-7. Enable Google OAuth (for "Sign in with Google"):
-   - Go to "Authentication" → "Providers"
-   - Find "Google" and toggle it ON
-   - Leave Client ID and Secret empty for now (we'll add later)
-   - Click "Save"
+7. Enable Google OAuth (Detailed Steps):
+   
+   **A. Get Callback URL from Supabase:**
+   - Go to Supabase Dashboard → Authentication → Providers → Google
+   - Copy the "Callback URL" (it looks like `https://rikocvsumwdceuojzclo.supabase.co/auth/v1/callback`)
+   - Keep this tab open.
+
+   **B. Configure Google Cloud Console:**
+   1. Go to [Google Cloud Console](https://console.cloud.google.com)
+   2. Create a **New Project** (name it `InsightPro-Auth`)
+   3. Search for **"OAuth consent screen"** in top bar
+      - Select **External** → Create
+      - App Name: `InsightsPro`
+      - Support Email: Select yours
+      - Developer Contact: Select yours
+      - Click "Save and Continue" (skip scopes/test users for now)
+   4. Go to **Credentials** (left sidebar)
+      - Click **+ CREATE CREDENTIALS** → **OAuth client ID**
+      - Application type: **Web application**
+      - Name: `Supabase Auth`
+      - **Authorized JavaScript origins**: Add `https://rikocvsumwdceuojzclo.supabase.co`
+      - **Authorized redirect URIs**: Paste the URL you copied from Supabase (`.../auth/v1/callback`)
+      - Click **Create**
+   
+   **C. Connect to Supabase:**
+   - Copy the **Client ID** and **Client Secret** from Google
+   - Go back to Supabase Dashboard → Authentication → Providers → Google
+   - Paste the Client ID and Secret
+   - Toggle "Enable Sign in with Google" **ON**
+   - Click **Save**
 
 ### Step 3: Get Gemini API Key
 
