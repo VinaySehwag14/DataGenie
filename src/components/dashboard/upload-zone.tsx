@@ -3,6 +3,7 @@
 import { useState, useCallback } from 'react'
 import { Upload, FileSpreadsheet, X } from 'lucide-react'
 import Papa from 'papaparse'
+import * as XLSX from 'xlsx'
 
 interface UploadZoneProps {
     onDataParsed: (data: any[], fileName: string) => void
@@ -34,15 +35,57 @@ export function UploadZone({ onDataParsed }: UploadZoneProps) {
             return
         }
 
-        // Check file type
-        const validTypes = ['text/csv', 'application/vnd.ms-excel', 'text/plain']
-        if (!validTypes.includes(file.type) && !file.name.endsWith('.csv')) {
-            setError('Please upload a CSV file')
+        // Determine file type
+        const fileName = file.name.toLowerCase()
+        const isExcel = fileName.endsWith('.xlsx') || fileName.endsWith('.xls')
+        const isCSV = fileName.endsWith('.csv')
+
+        if (!isExcel && !isCSV) {
+            setError('Please upload a CSV or Excel file (.csv, .xlsx, .xls)')
             setUploading(false)
             return
         }
 
-        // Parse CSV
+        // Process Excel files
+        if (isExcel) {
+            const reader = new FileReader()
+
+            reader.onload = (e) => {
+                try {
+                    const data = e.target?.result
+                    const workbook = XLSX.read(data, { type: 'binary' })
+
+                    // Get first sheet
+                    const firstSheetName = workbook.SheetNames[0]
+                    const worksheet = workbook.Sheets[firstSheetName]
+
+                    // Convert to JSON
+                    const jsonData = XLSX.utils.sheet_to_json(worksheet)
+
+                    if (jsonData.length === 0) {
+                        setError('Excel file is empty')
+                        setUploading(false)
+                        return
+                    }
+
+                    onDataParsed(jsonData, file.name)
+                    setUploading(false)
+                } catch (error: any) {
+                    setError(`Error parsing Excel file: ${error.message}`)
+                    setUploading(false)
+                }
+            }
+
+            reader.onerror = () => {
+                setError('Error reading Excel file')
+                setUploading(false)
+            }
+
+            reader.readAsBinaryString(file)
+            return
+        }
+
+        // Process CSV files (existing logic)
         Papa.parse(file, {
             header: true,
             skipEmptyLines: true,
@@ -131,14 +174,14 @@ export function UploadZone({ onDataParsed }: UploadZoneProps) {
                                     {isDragging ? 'Drop your file here' : 'Upload your data'}
                                 </p>
                                 <p className="text-sm text-gray-600">
-                                    Drag and drop a CSV file, or click to browse
+                                    Drag and drop a CSV or Excel file, or click to browse
                                 </p>
                             </div>
 
                             <label className="cursor-pointer">
                                 <input
                                     type="file"
-                                    accept=".csv,text/csv"
+                                    accept=".csv,.xlsx,.xls,text/csv,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                                     onChange={handleFileInput}
                                     className="hidden"
                                 />
@@ -149,7 +192,7 @@ export function UploadZone({ onDataParsed }: UploadZoneProps) {
                             </label>
 
                             <p className="text-xs text-gray-500">
-                                CSV files up to 10MB • Free tier: 5,000 rows
+                                CSV or Excel files up to 10MB • Free tier: 5,000 rows
                             </p>
                         </>
                     )}
