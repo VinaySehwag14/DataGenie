@@ -145,6 +145,7 @@ export default function DashboardPage() {
                             {dataSources.map((source) => (
                                 <div
                                     key={source.id}
+                                    onClick={() => router.push(`/dashboard/data/${source.id}`)}
                                     className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-md transition cursor-pointer"
                                 >
                                     <div className="flex items-start gap-3">
