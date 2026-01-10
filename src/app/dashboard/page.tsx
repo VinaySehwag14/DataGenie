@@ -6,7 +6,8 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { UploadZone } from '@/components/dashboard/upload-zone'
 import { DataTable } from '@/components/dashboard/data-table'
-import { BarChart3, LogOut, Plus, Database, Trash2, Home, Layout, CreditCard, Info, Sparkles, Download } from 'lucide-react'
+import { BarChart3, LogOut, Plus, Database, Trash2, Home, Layout, CreditCard, Info, Sparkles, Download, Loader2 } from 'lucide-react'
+import Papa from 'papaparse'
 
 export default function DashboardPage() {
     const [user, setUser] = useState<any>(null)
@@ -23,6 +24,37 @@ export default function DashboardPage() {
 
     const router = useRouter()
     const supabase = createClient()
+
+    // Sample data loading state
+    const [loadingSample, setLoadingSample] = useState<string | null>(null)
+
+    const handleLoadSample = async (url: string, fileName: string) => {
+        setLoadingSample(fileName)
+        try {
+            const response = await fetch(url)
+            const csvText = await response.text()
+
+            Papa.parse(csvText, {
+                header: true,
+                skipEmptyLines: true,
+                complete: (results) => {
+                    if (results.data.length > 0) {
+                        handleDataParsed(results.data, fileName)
+                    }
+                    setLoadingSample(null)
+                },
+                error: (error: any) => {
+                    console.error('Error parsing sample CSV:', error)
+                    setError('Failed to load sample data')
+                    setLoadingSample(null)
+                }
+            })
+        } catch (error) {
+            console.error('Error fetching sample data:', error)
+            setError('Failed to fetch sample data')
+            setLoadingSample(null)
+        }
+    }
 
     useEffect(() => {
         // Get current user
@@ -286,15 +318,36 @@ export default function DashboardPage() {
                                         <h3 className="text-2xl font-bold text-white mb-2">Upload New Dataset</h3>
                                         <p className="text-gray-400 mb-6">Supported formats: CSV, Excel (xlsx, xls)</p>
 
-                                        <div className="flex items-center justify-center gap-4 text-sm">
+                                        <div className="flex flex-wrap items-center justify-center gap-4 text-sm">
                                             <span className="text-gray-500">Don't have data? Try these:</span>
-                                            <a href="/samples/sales_performance.csv" download className="text-indigo-400 hover:text-indigo-300 hover:underline flex items-center gap-1">
-                                                Sales Data <Download className="w-3 h-3" />
-                                            </a>
+
+                                            <button
+                                                onClick={() => handleLoadSample('/samples/sales_performance.csv', 'Sales Performance.csv')}
+                                                disabled={!!loadingSample}
+                                                className="text-indigo-400 hover:text-indigo-300 hover:underline flex items-center gap-1 disabled:opacity-50 disabled:cursor-wait"
+                                            >
+                                                {loadingSample === 'Sales Performance.csv' ? (
+                                                    <Loader2 className="w-3 h-3 animate-spin" />
+                                                ) : (
+                                                    <Database className="w-3 h-3" />
+                                                )}
+                                                Sales Data
+                                            </button>
+
                                             <span className="text-gray-600">|</span>
-                                            <a href="/samples/marketing_metrics.csv" download className="text-indigo-400 hover:text-indigo-300 hover:underline flex items-center gap-1">
-                                                Marketing Data <Download className="w-3 h-3" />
-                                            </a>
+
+                                            <button
+                                                onClick={() => handleLoadSample('/samples/marketing_metrics.csv', 'Marketing Metrics.csv')}
+                                                disabled={!!loadingSample}
+                                                className="text-indigo-400 hover:text-indigo-300 hover:underline flex items-center gap-1 disabled:opacity-50 disabled:cursor-wait"
+                                            >
+                                                {loadingSample === 'Marketing Metrics.csv' ? (
+                                                    <Loader2 className="w-3 h-3 animate-spin" />
+                                                ) : (
+                                                    <Database className="w-3 h-3" />
+                                                )}
+                                                Marketing Data
+                                            </button>
                                         </div>
                                     </div>
 
