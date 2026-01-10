@@ -52,7 +52,76 @@ export default function DashboardPage() {
         }
     }
 
-    // ... (rest of methods until return)
+    const handleDataParsed = (data: any[], name: string) => {
+        setUploadedData(data)
+        setFileName(name)
+        setError(null)
+    }
+
+    const handleSaveData = async () => {
+        if (!uploadedData) return
+
+        setSaving(true)
+        setError(null)
+
+        try {
+            const response = await fetch('/api/data/upload', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    fileName,
+                    data: uploadedData,
+                }),
+            })
+
+            const result = await response.json()
+
+            if (!response.ok) {
+                throw new Error(result.error || 'Failed to save data')
+            }
+
+            // Success!
+            await loadDataSources()
+            setUploadedData(null)
+            setFileName('')
+            setShowUpload(false)
+        } catch (err: any) {
+            setError(err.message || 'Failed to save data')
+        } finally {
+            setSaving(false)
+        }
+    }
+
+    const handleDeleteDataSource = async (id: string, name: string) => {
+        setDeleteConfirm(id)
+    }
+
+    const confirmDelete = async () => {
+        if (!deleteConfirm) return
+
+        setDeleting(true)
+        setError(null)
+
+        try {
+            const response = await fetch(`/api/data/${deleteConfirm}`, {
+                method: 'DELETE',
+            })
+
+            const result = await response.json()
+
+            if (!response.ok) {
+                throw new Error(result.error || 'Failed to delete data source')
+            }
+
+            // Success - remove from local state
+            setDataSources(prev => prev.filter(ds => ds.id !== deleteConfirm))
+            setDeleteConfirm(null)
+        } catch (err: any) {
+            setError(err.message || 'Failed to delete data source')
+        } finally {
+            setDeleting(false)
+        }
+    }
 
     return (
         <div className="min-h-screen bg-gray-950 text-white relative selection:bg-indigo-500/30">
