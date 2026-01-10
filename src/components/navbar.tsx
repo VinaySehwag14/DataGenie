@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
-import { LogIn, Menu, X, Rocket } from 'lucide-react'
+import { LogIn, Menu, X, Rocket, User, LogOut } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { fadeIn, slideUp } from '@/lib/animations'
 
@@ -109,14 +109,37 @@ export default function Navbar() {
                     {!loading && (
                         user ? (
                             <div className="flex items-center gap-4">
-                                <span className="text-sm text-gray-400 hidden lg:inline-block">
-                                    {user.email}
-                                </span>
+                                <Link href="/dashboard" className="flex items-center gap-2 group">
+                                    <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-500 p-[1px]">
+                                        <div className="w-full h-full rounded-full bg-gray-900 border border-transparent overflow-hidden relative">
+                                            {user.user_metadata?.avatar_url || user.user_metadata?.picture ? (
+                                                <img
+                                                    src={user.user_metadata.avatar_url || user.user_metadata.picture}
+                                                    alt="Profile"
+                                                    className="w-full h-full object-cover group-hover:scale-110 transition-transform"
+                                                />
+                                            ) : (
+                                                <div className="w-full h-full flex items-center justify-center bg-white/10 text-white font-bold text-sm">
+                                                    {(user.user_metadata?.full_name || user.email || 'U').charAt(0).toUpperCase()}
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                    <div className="hidden lg:block text-left">
+                                        <p className="text-sm font-bold text-white leading-none mb-0.5">
+                                            {user.user_metadata?.full_name || user.user_metadata?.name || 'User'}
+                                        </p>
+                                        <p className="text-[10px] text-gray-400 leading-none">
+                                            {user.email?.length > 20 ? `${user.email.substring(0, 20)}...` : user.email}
+                                        </p>
+                                    </div>
+                                </Link>
                                 <button
                                     onClick={handleLogout}
-                                    className="px-4 py-2 text-sm font-medium text-gray-400 hover:text-white hover:bg-white/10 rounded-xl transition-all border border-transparent hover:border-white/10"
+                                    className="p-2 text-gray-400 hover:text-white hover:bg-white/10 rounded-xl transition-all"
+                                    title="Logout"
                                 >
-                                    Logout
+                                    <LogOut className="w-5 h-5" />
                                 </button>
                             </div>
                         ) : (
