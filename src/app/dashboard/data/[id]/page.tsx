@@ -106,7 +106,22 @@ export default function DataSourcePageClient({ params }: { params: Promise<{ id:
             {/* Main Content */}
             <main className="relative z-10 max-w-7xl mx-auto px-6 pt-28 pb-12">
 
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                {/* Header Actions */}
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
+                    <div>
+                        <h1 className="text-3xl font-bold text-white mb-2">{dataSource?.name || 'Data Analysis'}</h1>
+                        <p className="text-gray-400">Analysis and insights from your data</p>
+                    </div>
+                    <div className="flex items-center gap-3">
+                        <ExportMenu
+                            data={data}
+                            dataSourceName={dataSource?.name || 'datagenie-report'}
+                            insights={insights}
+                        />
+                    </div>
+                </div>
+
+                <div id="dashboard-content" className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     {/* Left Column: Chat & Insights */}
                     <div className="space-y-8 lg:col-span-1">
                         {/* AI Stats Card */}
