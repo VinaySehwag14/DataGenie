@@ -1,14 +1,9 @@
 import Link from 'next/link'
 import { ArrowRight, Check, X } from 'lucide-react'
-import Navbar from '@/components/navbar'
 
 export default function PricingPage() {
     return (
-        <div className="min-h-screen bg-neutral-950 text-neutral-50">
-            {/* Navbar */}
-            {/* Navbar */}
-            <Navbar />
-
+        <div className="min-h-screen bg-neutral-950 text-neutral-50 pt-20">
             {/* Hero */}
             <section className="py-20 px-6">
                 <div className="max-w-7xl mx-auto text-center">
@@ -118,12 +113,7 @@ export default function PricingPage() {
                 </div>
             </section>
 
-            {/* Footer */}
-            <footer className="border-t border-neutral-800 py-8 mt-20">
-                <div className="max-w-7xl mx-auto px-6 text-center text-gray-500">
-                    <p>&copy; 2024 DataGenie. Powered by AI. Built with ❤️</p>
-                </div>
-            </footer>
+
         </div>
     )
 }

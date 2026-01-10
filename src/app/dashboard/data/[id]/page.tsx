@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
-import { BarChart3, LogOut, ArrowLeft, TrendingUp, Sparkles, LayoutGrid, MessageSquare, Download, Share2, Home, CreditCard, Info } from 'lucide-react'
+import { BarChart3, TrendingUp, Sparkles, LayoutGrid } from 'lucide-react'
 import { BarChartComponent } from '@/components/dashboard/charts/bar-chart'
 import { LineChartComponent } from '@/components/dashboard/charts/line-chart'
 import { PieChartComponent } from '@/components/dashboard/charts/pie-chart'
@@ -78,10 +78,7 @@ export default function DataSourcePageClient({ params }: { params: Promise<{ id:
         }
     }
 
-    const handleLogout = async () => {
-        await supabase.auth.signOut()
-        router.push('/login')
-    }
+
 
     if (loading) {
         return (

@@ -1,12 +1,9 @@
 import Link from "next/link";
 import { ArrowRight, BarChart2, Upload, MessageSquare } from "lucide-react";
-import Navbar from "@/components/navbar";
 
 export default function Home() {
   return (
     <div className="flex flex-col min-h-screen bg-neutral-950 text-neutral-50">
-      {/* Navbar */}
-      <Navbar />
 
       {/* Hero Section */}
       <main className="flex-1 flex flex-col items-center justify-center text-center px-4 py-20">
@@ -60,10 +57,6 @@ export default function Home() {
           />
         </div>
       </main>
-
-      <footer className="py-8 text-center text-neutral-600 text-sm border-t border-neutral-800">
-        © {new Date().getFullYear()} Data Genie. Built with Next.js & Gemini AI.
-      </footer>
     </div>
   );
 }
