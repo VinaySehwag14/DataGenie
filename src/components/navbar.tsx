@@ -69,6 +69,25 @@ export default function Navbar() {
     const isHome = pathname === '/'
     const showBackground = scrolled || !isHome
 
+    const isAuthPage = pathname === '/login' || pathname === '/signup'
+
+    if (isAuthPage) {
+        return (
+            <header className="fixed top-0 left-0 right-0 z-50 py-6">
+                <div className="max-w-7xl mx-auto px-6 flex justify-center md:justify-start">
+                    <Link href="/" className="flex items-center gap-3 group">
+                        <div className="relative w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-lg shadow-white/10 overflow-hidden">
+                            <img src="/logo.png" alt="DataGenie" className="w-full h-full object-cover" />
+                        </div>
+                        <span className="font-bold text-xl text-white">
+                            DataGenie
+                        </span>
+                    </Link>
+                </div>
+            </header>
+        )
+    }
+
     return (
         <header
             className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${showBackground ? 'bg-gray-950/80 backdrop-blur-xl border-b border-white/10 py-3' : 'bg-transparent py-5'
