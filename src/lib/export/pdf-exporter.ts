@@ -219,19 +219,21 @@ export async function exportToPDF(options: PDFExportOptions) {
             yPos = 20
         }
 
-        doc.setFillColor(16, 185, 129, 0.1)
+        // Light green background (not dark!)
+        doc.setFillColor(220, 252, 231)
         doc.roundedRect(20, yPos - 5, 170, 18, 2, 2, 'F')
 
+        // Green dot indicator
         doc.setFillColor(16, 185, 129)
         doc.circle(27, yPos + 3, 3, 'F')
 
-        // Show category name (now in value field)
+        // Title and value
         doc.setFontSize(12)
         doc.setFont('helvetica', 'bold')
         doc.setTextColor(0, 0, 0)
         doc.text(`${insight.title}: ${insight.value}`, 35, yPos + 2)
 
-        // Show numbers in description
+        // Description with numbers 
         doc.setFontSize(9)
         doc.setFont('helvetica', 'normal')
         doc.setTextColor(60, 60, 60)
