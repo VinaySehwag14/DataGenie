@@ -19,6 +19,8 @@ export default function DashboardPage() {
     const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null)
     const [deleting, setDeleting] = useState(false)
 
+    const [loading, setLoading] = useState(true)
+
     const router = useRouter()
     const supabase = createClient()
 
@@ -45,84 +47,12 @@ export default function DashboardPage() {
             }
         } catch (err) {
             console.error('Failed to load data sources:', err)
-        }
-    }
-
-    const handleDataParsed = (data: any[], name: string) => {
-        setUploadedData(data)
-        setFileName(name)
-        setError(null)
-    }
-
-    const handleSaveData = async () => {
-        if (!uploadedData) return
-
-        setSaving(true)
-        setError(null)
-
-        try {
-            const response = await fetch('/api/data/upload', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    fileName,
-                    data: uploadedData,
-                }),
-            })
-
-            const result = await response.json()
-
-            if (!response.ok) {
-                throw new Error(result.error || 'Failed to save data')
-            }
-
-            // Success!
-            await loadDataSources()
-            setUploadedData(null)
-            setFileName('')
-            setShowUpload(false)
-        } catch (err: any) {
-            setError(err.message || 'Failed to save data')
         } finally {
-            setSaving(false)
+            setLoading(false)
         }
     }
 
-    const handleLogout = async () => {
-        await supabase.auth.signOut()
-        router.push('/login')
-    }
-
-    const handleDeleteDataSource = async (id: string, name: string) => {
-        setDeleteConfirm(id)
-    }
-
-    const confirmDelete = async () => {
-        if (!deleteConfirm) return
-
-        setDeleting(true)
-        setError(null)
-
-        try {
-            const response = await fetch(`/api/data/${deleteConfirm}`, {
-                method: 'DELETE',
-            })
-
-            const result = await response.json()
-
-            if (!response.ok) {
-                throw new Error(result.error || 'Failed to delete data source')
-            }
-
-            // Success - remove from local state
-            setDataSources(prev => prev.filter(ds => ds.id !== deleteConfirm))
-            setDeleteConfirm(null)
-        } catch (err: any) {
-            setError(err.message || 'Failed to delete data source')
-        } finally {
-            setDeleting(false)
-        }
-    }
+    // ... (rest of methods until return)
 
     return (
         <div className="min-h-screen bg-gray-950 text-white relative selection:bg-indigo-500/30">
@@ -177,8 +107,8 @@ export default function DashboardPage() {
                 <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
                     <div className="flex items-center gap-4">
                         <Link href="/" className="group">
-                            <div className="w-10 h-10 btn-gradient-primary rounded-xl flex items-center justify-center group-hover:scale-105 transition-transform duration-300">
-                                <img src="/logo.png" alt="DataGenie Logo" className="w-6 h-6 invert brightness-0" />
+                            <div className="w-10 h-10 btn-gradient-primary rounded-xl flex items-center justify-center group-hover:scale-105 transition-transform duration-300 shadow-lg shadow-indigo-500/20">
+                                <Sparkles className="w-6 h-6 text-white text-shadow" />
                             </div>
                         </Link>
                         <div>
@@ -191,7 +121,7 @@ export default function DashboardPage() {
                         </div>
                     </div>
 
-                    <nav className="hidden md:flex items-center gap-1 bg-white/5 rounded-full p-1 border border-white/5 backdrop-blur-lg">
+                    <nav className="hidden md:flex items-center gap-1 bg-white/5 rounded-full p-1 border border-white/5 backdrop-blur-lg mx-4">
                         <Link href="/" className="px-4 py-2 text-sm text-gray-400 hover:text-white hover:bg-white/10 rounded-full transition-all flex items-center gap-2">
                             <Home className="w-4 h-4" /> Home
                         </Link>
@@ -228,168 +158,178 @@ export default function DashboardPage() {
                     </p>
                 </div>
 
-                {/* Data Sources List */}
-                {dataSources.length > 0 && !showUpload && (
-                    <div className="mb-12 animate-in slide-in-from-bottom-10 fade-in duration-700 delay-100">
-                        <div className="flex items-center justify-between mb-8">
-                            <h3 className="text-xl font-bold text-white flex items-center gap-2">
-                                <Database className="w-5 h-5 text-indigo-400" />
-                                Your Data Sources
-                            </h3>
-                            <button
-                                onClick={() => setShowUpload(true)}
-                                className="flex items-center gap-2 px-6 py-3 btn-gradient-primary text-white rounded-xl hover:shadow-lg hover:shadow-indigo-500/25 transition-all duration-300 font-semibold group"
-                            >
-                                <Plus className="w-5 h-5 group-hover:rotate-90 transition-transform duration-300" />
-                                Upload New Data
-                            </button>
-                        </div>
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            {dataSources.map((source, idx) => (
-                                <div
-                                    key={source.id}
-                                    style={{ animationDelay: `${idx * 100}ms` }}
-                                    className="group relative bg-white/5 border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition-all duration-500 cursor-pointer card-3d animate-in fade-in zoom-in fill-mode-backwards"
-                                >
-                                    <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 to-purple-500/5 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-
-                                    <div
-                                        className="relative z-10"
-                                        onClick={() => router.push(`/dashboard/data/${source.id}`)}
-                                    >
-                                        <div className="flex items-start justify-between mb-6">
-                                            <div className="w-14 h-14 btn-gradient-primary rounded-2xl flex items-center justify-center transform group-hover:scale-110 group-hover:rotate-3 transition-all duration-500 shadow-lg shadow-indigo-500/20">
-                                                <BarChart3 className="w-7 h-7 text-white" />
-                                            </div>
-                                            <button
-                                                onClick={(e) => {
-                                                    e.stopPropagation()
-                                                    handleDeleteDataSource(source.id, source.name)
-                                                }}
-                                                className="p-2.5 text-gray-500 hover:text-red-400 hover:bg-red-500/10 rounded-xl transition-all duration-300 opacity-0 group-hover:opacity-100"
-                                                title="Delete data source"
-                                            >
-                                                <Trash2 className="w-5 h-5" />
-                                            </button>
-                                        </div>
-
-                                        <h4 className="text-xl font-bold text-white mb-2 truncate group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-indigo-400 group-hover:to-purple-400 transition-all duration-300">
-                                            {source.name}
-                                        </h4>
-                                        <div className="flex items-center gap-4 text-sm text-gray-400 mb-4">
-                                            <span className="flex items-center gap-1.5 bg-white/5 px-2.5 py-1 rounded-lg border border-white/5">
-                                                <Database className="w-3.5 h-3.5" />
-                                                {source.row_count.toLocaleString()} rows
-                                            </span>
-                                            <span className="flex items-center gap-1.5 bg-white/5 px-2.5 py-1 rounded-lg border border-white/5">
-                                                <span className="w-1.5 h-1.5 bg-green-500 rounded-full glow-animation"></span>
-                                                Active
-                                            </span>
-                                        </div>
-
-                                        <div className="text-xs text-gray-500 font-medium flex items-center gap-2 pt-4 border-t border-white/5">
-                                            <span>Added {new Date(source.created_at).toLocaleDateString()}</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
+                {loading ? (
+                    <div className="flex flex-col items-center justify-center py-20">
+                        <div className="w-16 h-16 border-4 border-indigo-500/30 border-t-indigo-500 rounded-full animate-spin mb-6 glow-animation" />
+                        <h3 className="text-xl font-bold text-white mb-2">Loading Workspace...</h3>
+                        <p className="text-indigo-300 animate-pulse">Summoning your data genie</p>
                     </div>
-                )}
-
-                {/* Upload Section */}
-                {(showUpload || dataSources.length === 0) && (
-                    <div className="max-w-4xl mx-auto animate-in scale-95 fade-in duration-500">
-                        {dataSources.length > 0 && (
-                            <button
-                                onClick={() => setShowUpload(false)}
-                                className="mb-6 flex items-center gap-2 text-sm text-gray-400 hover:text-white transition-colors group"
-                            >
-                                <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-white/10 transition-colors">
-                                    ←
+                ) : (
+                    <>
+                        {/* Data Sources List */}
+                        {dataSources.length > 0 && !showUpload && (
+                            <div className="mb-12 animate-in slide-in-from-bottom-10 fade-in duration-700 delay-100">
+                                <div className="flex items-center justify-between mb-8">
+                                    <h3 className="text-xl font-bold text-white flex items-center gap-2">
+                                        <Database className="w-5 h-5 text-indigo-400" />
+                                        Your Data Sources
+                                    </h3>
+                                    <button
+                                        onClick={() => setShowUpload(true)}
+                                        className="flex items-center gap-2 px-6 py-3 btn-gradient-primary text-white rounded-xl hover:shadow-lg hover:shadow-indigo-500/25 transition-all duration-300 font-semibold group"
+                                    >
+                                        <Plus className="w-5 h-5 group-hover:rotate-90 transition-transform duration-300" />
+                                        Upload New Data
+                                    </button>
                                 </div>
-                                Back to dashboard
-                            </button>
+
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                    {dataSources.map((source, idx) => (
+                                        <div
+                                            key={source.id}
+                                            style={{ animationDelay: `${idx * 100}ms` }}
+                                            className="group relative bg-white/5 border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition-all duration-500 cursor-pointer card-3d animate-in fade-in zoom-in fill-mode-backwards"
+                                        >
+                                            <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 to-purple-500/5 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+                                            <div
+                                                className="relative z-10"
+                                                onClick={() => router.push(`/dashboard/data/${source.id}`)}
+                                            >
+                                                <div className="flex items-start justify-between mb-6">
+                                                    <div className="w-14 h-14 btn-gradient-primary rounded-2xl flex items-center justify-center transform group-hover:scale-110 group-hover:rotate-3 transition-all duration-500 shadow-lg shadow-indigo-500/20">
+                                                        <BarChart3 className="w-7 h-7 text-white" />
+                                                    </div>
+                                                    <button
+                                                        onClick={(e) => {
+                                                            e.stopPropagation()
+                                                            handleDeleteDataSource(source.id, source.name)
+                                                        }}
+                                                        className="p-2.5 text-gray-500 hover:text-red-400 hover:bg-red-500/10 rounded-xl transition-all duration-300 opacity-0 group-hover:opacity-100"
+                                                        title="Delete data source"
+                                                    >
+                                                        <Trash2 className="w-5 h-5" />
+                                                    </button>
+                                                </div>
+
+                                                <h4 className="text-xl font-bold text-white mb-2 truncate group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-indigo-400 group-hover:to-purple-400 transition-all duration-300">
+                                                    {source.name}
+                                                </h4>
+                                                <div className="flex items-center gap-4 text-sm text-gray-400 mb-4">
+                                                    <span className="flex items-center gap-1.5 bg-white/5 px-2.5 py-1 rounded-lg border border-white/5">
+                                                        <Database className="w-3.5 h-3.5" />
+                                                        {source.row_count.toLocaleString()} rows
+                                                    </span>
+                                                    <span className="flex items-center gap-1.5 bg-white/5 px-2.5 py-1 rounded-lg border border-white/5">
+                                                        <span className="w-1.5 h-1.5 bg-green-500 rounded-full glow-animation"></span>
+                                                        Active
+                                                    </span>
+                                                </div>
+
+                                                <div className="text-xs text-gray-500 font-medium flex items-center gap-2 pt-4 border-t border-white/5">
+                                                    <span>Added {new Date(source.created_at).toLocaleDateString()}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
                         )}
 
-                        <div className="bg-gray-900/50 border border-white/10 rounded-3xl p-8 backdrop-blur-sm card-3d">
-                            <div className="mb-8 text-center">
-                                <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-tr from-indigo-500/20 to-purple-500/20 mb-4 glow-animation">
-                                    <Plus className="w-8 h-8 text-indigo-400" />
-                                </div>
-                                <h3 className="text-2xl font-bold text-white mb-2">Upload New Dataset</h3>
-                                <p className="text-gray-400">Supported formats: CSV, Excel (xlsx, xls)</p>
-                            </div>
-
-                            <UploadZone onDataParsed={handleDataParsed} />
-
-                            {uploadedData && (
-                                <div className="mt-8 space-y-6 animate-in slide-in-from-bottom-5 fade-in duration-500">
-                                    <div className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden">
-                                        <div className="p-4 border-b border-white/10 flex items-center justify-between">
-                                            <h4 className="font-semibold text-white flex items-center gap-2">
-                                                <Database className="w-4 h-4 text-indigo-400" />
-                                                Data Preview
-                                            </h4>
-                                            <span className="text-xs text-gray-400 bg-white/10 px-2 py-1 rounded-md">
-                                                {uploadedData.length.toLocaleString()} rows detected
-                                            </span>
+                        {/* Upload Section */}
+                        {(showUpload || (dataSources.length === 0 && !loading)) && (
+                            <div className="max-w-4xl mx-auto animate-in scale-95 fade-in duration-500">
+                                {dataSources.length > 0 && (
+                                    <button
+                                        onClick={() => setShowUpload(false)}
+                                        className="mb-6 flex items-center gap-2 text-sm text-gray-400 hover:text-white transition-colors group"
+                                    >
+                                        <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-white/10 transition-colors">
+                                            ←
                                         </div>
-                                        <div className="max-h-[400px] overflow-auto">
-                                            <DataTable data={uploadedData} fileName={fileName} />
+                                        Back to dashboard
+                                    </button>
+                                )}
+
+                                <div className="bg-gray-900/50 border border-white/10 rounded-3xl p-8 backdrop-blur-sm card-3d">
+                                    <div className="mb-8 text-center">
+                                        <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-tr from-indigo-500/20 to-purple-500/20 mb-4 glow-animation">
+                                            <Plus className="w-8 h-8 text-indigo-400" />
                                         </div>
+                                        <h3 className="text-2xl font-bold text-white mb-2">Upload New Dataset</h3>
+                                        <p className="text-gray-400">Supported formats: CSV, Excel (xlsx, xls)</p>
                                     </div>
 
-                                    <div className="flex items-center justify-between bg-gradient-to-r from-indigo-500/10 to-purple-500/10 border border-indigo-500/20 rounded-2xl p-6">
-                                        <div>
-                                            <p className="font-bold text-white text-lg">Ready to analyze?</p>
-                                            <p className="text-sm text-gray-400">
-                                                Import <strong>{fileName}</strong> to start generating insights.
-                                            </p>
-                                        </div>
+                                    <UploadZone onDataParsed={handleDataParsed} />
 
-                                        <div className="flex gap-4">
-                                            <button
-                                                onClick={() => {
-                                                    setUploadedData(null)
-                                                    setFileName('')
-                                                }}
-                                                className="px-6 py-3 text-gray-300 hover:text-white hover:bg-white/10 rounded-xl transition font-medium"
-                                                disabled={saving}
-                                            >
-                                                Cancel
-                                            </button>
-                                            <button
-                                                onClick={handleSaveData}
-                                                disabled={saving}
-                                                className="px-8 py-3 btn-gradient-primary text-white font-bold rounded-xl hover:shadow-lg hover:shadow-indigo-500/25 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-                                            >
-                                                {saving ? (
-                                                    <>
-                                                        <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                                                        Saving...
-                                                    </>
-                                                ) : (
-                                                    <>
-                                                        <RocketIcon className="w-4 h-4" />
-                                                        Launch Analysis
-                                                    </>
-                                                )}
-                                            </button>
-                                        </div>
-                                    </div>
+                                    {uploadedData && (
+                                        <div className="mt-8 space-y-6 animate-in slide-in-from-bottom-5 fade-in duration-500">
+                                            <div className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden">
+                                                <div className="p-4 border-b border-white/10 flex items-center justify-between">
+                                                    <h4 className="font-semibold text-white flex items-center gap-2">
+                                                        <Database className="w-4 h-4 text-indigo-400" />
+                                                        Data Preview
+                                                    </h4>
+                                                    <span className="text-xs text-gray-400 bg-white/10 px-2 py-1 rounded-md">
+                                                        {uploadedData.length.toLocaleString()} rows detected
+                                                    </span>
+                                                </div>
+                                                <div className="max-h-[400px] overflow-auto">
+                                                    <DataTable data={uploadedData} fileName={fileName} />
+                                                </div>
+                                            </div>
 
-                                    {error && (
-                                        <div className="bg-red-500/10 border border-red-500/20 text-red-400 px-6 py-4 rounded-xl flex items-center gap-3 animate-in shake">
-                                            <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
-                                            {error}
+                                            <div className="flex items-center justify-between bg-gradient-to-r from-indigo-500/10 to-purple-500/10 border border-indigo-500/20 rounded-2xl p-6">
+                                                <div>
+                                                    <p className="font-bold text-white text-lg">Ready to analyze?</p>
+                                                    <p className="text-sm text-gray-400">
+                                                        Import <strong>{fileName}</strong> to start generating insights.
+                                                    </p>
+                                                </div>
+
+                                                <div className="flex gap-4">
+                                                    <button
+                                                        onClick={() => {
+                                                            setUploadedData(null)
+                                                            setFileName('')
+                                                        }}
+                                                        className="px-6 py-3 text-gray-300 hover:text-white hover:bg-white/10 rounded-xl transition font-medium"
+                                                        disabled={saving}
+                                                    >
+                                                        Cancel
+                                                    </button>
+                                                    <button
+                                                        onClick={handleSaveData}
+                                                        disabled={saving}
+                                                        className="px-8 py-3 btn-gradient-primary text-white font-bold rounded-xl hover:shadow-lg hover:shadow-indigo-500/25 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                                                    >
+                                                        {saving ? (
+                                                            <>
+                                                                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                                                                Saving...
+                                                            </>
+                                                        ) : (
+                                                            <>
+                                                                <RocketIcon className="w-4 h-4" />
+                                                                Launch Analysis
+                                                            </>
+                                                        )}
+                                                    </button>
+                                                </div>
+                                            </div>
+
+                                            {error && (
+                                                <div className="bg-red-500/10 border border-red-500/20 text-red-400 px-6 py-4 rounded-xl flex items-center gap-3 animate-in shake">
+                                                    <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
+                                                    {error}
+                                                </div>
+                                            )}
                                         </div>
                                     )}
                                 </div>
-                            )}
-                        </div>
-                    </div>
+                            </div>
+                        )}
+                    </>
                 )}
             </main>
         </div>
