@@ -1,3 +1,5 @@
+'use client'
+
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { ArrowRight, BarChart3, Bot, FileText, Layout, Lock, Share2, Sparkles, Zap } from 'lucide-react'
