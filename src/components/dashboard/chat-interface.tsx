@@ -20,17 +20,41 @@ export function ChatInterface({ dataSourceId, dataSourceName }: ChatInterfacePro
     const [messages, setMessages] = useState<Message[]>([
         {
             role: 'assistant',
-            content: `Hi! I'm your AI analyst. Ask me anything about "${dataSourceName}". For example: "What were total sales?" or "Show me sales by product"`
+            content: `Hi! I'm your AI analyst. Ask me anything about "${dataSourceName}".`
         }
     ])
     const [input, setInput] = useState('')
     const [loading, setLoading] = useState(false)
+    const [suggestedQuestions, setSuggestedQuestions] = useState<string[]>([
+        'What were total sales?',
+        'Show me sales by product',
+        'Which month had highest revenue?'
+    ])
     const messagesEndRef = useRef<HTMLDivElement>(null)
+
+    // Fetch smart suggestions on mount
+    useEffect(() => {
+        fetchSuggestedQuestions()
+    }, [dataSourceId])
 
     // Auto-scroll to bottom when new messages arrive
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
     }, [messages])
+
+    const fetchSuggestedQuestions = async () => {
+        try {
+            const response = await fetch(`/api/ai/suggestions?dataSourceId=${dataSourceId}`)
+            const result = await response.json()
+
+            if (result.suggestions && result.suggestions.length > 0) {
+                setSuggestedQuestions(result.suggestions)
+            }
+        } catch (error) {
+            console.error('Failed to fetch suggestions:', error)
+            // Keep default suggestions on error
+        }
+    }
 
     const handleSend = async () => {
         if (!input.trim() || loading) return
@@ -102,10 +126,10 @@ export function ChatInterface({ dataSourceId, dataSourceName }: ChatInterfacePro
                     >
                         <div
                             className={`max-w-[80%] rounded-lg px-4 py-3 ${message.role === 'user'
-                                    ? 'bg-indigo-600 text-white'
-                                    : message.error
-                                        ? 'bg-red-50 text-red-900 border border-red-200'
-                                        : 'bg-gray-100 text-gray-900'
+                                ? 'bg-indigo-600 text-white'
+                                : message.error
+                                    ? 'bg-red-50 text-red-900 border border-red-200'
+                                    : 'bg-gray-100 text-gray-900'
                                 }`}
                         >
                             <p className="whitespace-pre-wrap">{message.content}</p>
@@ -200,11 +224,7 @@ export function ChatInterface({ dataSourceId, dataSourceName }: ChatInterfacePro
                 {/* Suggested questions */}
                 <div className="mt-3 flex flex-wrap gap-2">
                     <span className="text-xs text-gray-500">Try:</span>
-                    {[
-                        'What were total sales?',
-                        'Show me sales by product',
-                        'Which month had highest revenue?'
-                    ].map((suggestion, i) => (
+                    {suggestedQuestions.map((suggestion, i) => (
                         <button
                             key={i}
                             onClick={() => setInput(suggestion)}

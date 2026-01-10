@@ -74,5 +74,5 @@ AND EXTRACT(MONTH FROM (row_data->>'Date')::date) = 1
 function isValidDate(value: any): boolean {
     if (typeof value !== 'string') return false
     const date = new Date(value)
-    return !isNaN(date.getTime()) && value.match(/\d{4}-\d{2}-\d{2}/)
+    return !isNaN(date.getTime()) && !!value.match(/\d{4}-\d{2}-\d{2}/)
 }
