@@ -25,12 +25,12 @@ export async function POST(request: Request) {
             )
         }
 
-        // Fetch data source with ownership check
+        // Fetch data source with ownership check (and workspace info)
         const { data: dataSource, error: sourceError } = await supabase
             .from('data_sources')
             .select(`
         *,
-        workspaces!inner(user_id)
+        workspaces!inner(id, user_id, subscription_plan, daily_ai_usage_count, last_reset_date)
       `)
             .eq('id', dataSourceId)
             .single()
@@ -42,6 +42,42 @@ export async function POST(request: Request) {
         if (dataSource.workspaces.user_id !== user.id) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 403 })
         }
+
+        // === RESTRICTION CHECK START ===
+        const workspace = dataSource.workspaces
+        const isFreePlan = !workspace.subscription_plan || workspace.subscription_plan === 'free'
+
+        if (isFreePlan) {
+            const today = new Date()
+            const lastReset = new Date(workspace.last_reset_date)
+            const isSameDay = today.toDateString() === lastReset.toDateString()
+
+            let currentUsage = isSameDay ? workspace.daily_ai_usage_count : 0
+
+            // Check limit
+            if (currentUsage >= 10) {
+                return NextResponse.json({
+                    role: 'assistant',
+                    content: 'You have reached your daily limit of 10 AI queries on the Free plan. Please upgrade to Pro for unlimited access.',
+                    error: true
+                })
+            }
+
+            // Update usage (Optimistic update - we'll assume the query works)
+            // Ideally this should be done after success, but this is simpler for MVP
+            const { error: updateError } = await supabase
+                .from('workspaces')
+                .update({
+                    daily_ai_usage_count: currentUsage + 1,
+                    last_reset_date: new Date().toISOString()
+                })
+                .eq('id', workspace.id)
+
+            if (updateError) {
+                console.error("Failed to update usage count", updateError)
+            }
+        }
+        // === RESTRICTION CHECK END ===
 
         // Fetch sample data for context
         const { data: sampleRows } = await supabase

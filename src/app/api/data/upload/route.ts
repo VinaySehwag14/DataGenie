@@ -25,7 +25,7 @@ export async function POST(request: Request) {
         // Get user's workspace
         const { data: workspace, error: workspaceError } = await supabase
             .from('workspaces')
-            .select('id')
+            .select('id, subscription_plan')
             .eq('user_id', user.id)
             .single()
 
@@ -35,6 +35,33 @@ export async function POST(request: Request) {
                 { status: 404 }
             )
         }
+
+        // === RESTRICTION CHECK START ===
+        const isFreePlan = !workspace.subscription_plan || workspace.subscription_plan === 'free'
+
+        // 1. Check Row Limit (Max 1000 for Free)
+        if (isFreePlan && data.length > 1000) {
+            return NextResponse.json(
+                { error: 'Free plan is limited to 1,000 rows per file. Please upgrade to Pro.' },
+                { status: 403 }
+            )
+        }
+
+        // 2. Check Data Source Count Limit (Max 5 for Free)
+        if (isFreePlan) {
+            const { count, error: countError } = await supabase
+                .from('data_sources')
+                .select('*', { count: 'exact', head: true })
+                .eq('workspace_id', workspace.id)
+
+            if (!countError && count !== null && count >= 5) {
+                return NextResponse.json(
+                    { error: 'Free plan is limited to 5 data sources. Please upgrade to Pro.' },
+                    { status: 403 }
+                )
+            }
+        }
+        // === RESTRICTION CHECK END ===
 
         // Extract schema from first row
         const schema = data.length > 0 ? Object.keys(data[0]) : []

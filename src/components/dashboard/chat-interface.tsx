@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
-import { Send, Loader2, Database, Sparkles } from 'lucide-react'
+import { Send, Loader2, Database, Sparkles, CreditCard } from 'lucide-react'
 
 interface Message {
     role: 'user' | 'assistant'
@@ -133,6 +133,18 @@ export function ChatInterface({ dataSourceId, dataSourceName }: ChatInterfacePro
                                 }`}
                         >
                             <p className="whitespace-pre-wrap leading-relaxed">{message.content}</p>
+
+                            {/* Upgrade Prompt */}
+                            {message.error && (message.content.includes('limit') || message.content.includes('upgrade')) && (
+                                <div className="mt-4 pt-4 border-t border-red-500/20">
+                                    <a
+                                        href="/pricing"
+                                        className="inline-flex items-center gap-2 px-4 py-2 bg-red-500/10 hover:bg-red-500/20 text-red-200 rounded-lg text-sm font-semibold transition-colors"
+                                    >
+                                        Upgrade to Pro <CreditCard className="w-4 h-4" />
+                                    </a>
+                                </div>
+                            )}
 
                             {/* Show SQL if available */}
                             {message.sql && (

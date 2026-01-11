@@ -1,9 +1,108 @@
+'use client'
+
+import { useState } from 'react'
 import Link from 'next/link'
-import { ArrowRight, Check, X, Shield, Zap, Rocket } from 'lucide-react'
+import { ArrowRight, Check, X, Shield, Zap, Rocket, Loader2 } from 'lucide-react'
+import Script from 'next/script'
+import { useRouter } from 'next/navigation'
+import { createClient } from '@/lib/supabase/client'
+
+declare global {
+    interface Window {
+        Razorpay: any;
+    }
+}
 
 export default function PricingPage() {
+    const [loading, setLoading] = useState<string | null>(null)
+    const router = useRouter()
+    const supabase = createClient()
+
+    const handleSubscribe = async (plan: string, price: number) => {
+        try {
+            setLoading(plan)
+
+            // 1. Check if user is logged in
+            const { data: { user } } = await supabase.auth.getUser()
+
+            if (!user) {
+                router.push('/login?redirect=/pricing')
+                return
+            }
+
+            // 2. Create Order
+            const response = await fetch('/api/payment/create-order', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    amount: price,
+                    currency: 'INR'
+                })
+            })
+
+            const order = await response.json()
+
+            if (!response.ok) {
+                throw new Error(order.error || 'Failed to create order')
+            }
+
+            // 3. Open Razorpay
+            const options = {
+                key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+                amount: order.amount,
+                currency: order.currency,
+                name: "DataGenie",
+                description: `${plan} Subscription`,
+                order_id: order.id,
+                handler: async function (response: any) {
+                    // 4. Verify Payment
+                    const verifyRes = await fetch('/api/payment/verify', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            razorpay_order_id: response.razorpay_order_id,
+                            razorpay_payment_id: response.razorpay_payment_id,
+                            razorpay_signature: response.razorpay_signature,
+                            plan: plan.toLowerCase()
+                        })
+                    })
+
+                    const verifyData = await verifyRes.json()
+
+                    if (verifyData.message === 'success') {
+                        alert('Payment Successful! Welcome to Pro.')
+                        router.push('/dashboard')
+                    } else {
+                        alert('Payment Verification Failed')
+                    }
+                },
+                prefill: {
+                    name: user.user_metadata.full_name,
+                    email: user.email,
+                },
+                theme: {
+                    color: "#6366f1"
+                }
+            }
+
+            const rzp1 = new window.Razorpay(options)
+            rzp1.open()
+
+        } catch (error) {
+            console.error('Payment failed:', error)
+            alert('Something went wrong. Please try again.')
+        } finally {
+            setLoading(null)
+        }
+    }
+
     return (
         <div className="min-h-screen bg-gray-950 text-white relative overflow-hidden selection:bg-indigo-500/30 pt-20">
+            <Script
+                id="razorpay-checkout-js"
+                src="https://checkout.razorpay.com/v1/checkout.js"
+            />
+
             {/* Background Effects */}
             <div className="absolute inset-0 z-0 pointer-events-none">
                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_-20%,rgba(120,119,198,0.2),rgba(255,255,255,0))]"></div>
@@ -73,9 +172,12 @@ export default function PricingPage() {
                                 </li>
                             </ul>
 
-                            <Link href="/signup" className="block w-full py-4 rounded-xl font-bold text-center border border-white/10 hover:bg-white/5 transition-all duration-300 text-white">
-                                Get Started
-                            </Link>
+                            <button
+                                disabled={true}
+                                className="block w-full py-4 rounded-xl font-bold text-center border border-white/10 bg-white/5 text-gray-400 cursor-not-allowed"
+                            >
+                                Current Plan
+                            </button>
                         </div>
                     </div>
 
@@ -138,9 +240,22 @@ export default function PricingPage() {
                                 </li>
                             </ul>
 
-                            <Link href="/signup" className="block w-full py-4 rounded-xl font-bold text-center bg-white text-gray-950 hover:bg-gray-100 transition-all duration-300 shadow-lg shadow-white/10 transform hover:scale-[1.02]">
-                                Start Pro Trial
-                            </Link>
+                            <button
+                                onClick={() => handleSubscribe('Pro', 2499)}
+                                disabled={!!loading}
+                                className="block w-full py-4 rounded-xl font-bold text-center bg-white text-gray-950 hover:bg-gray-100 transition-all duration-300 shadow-lg shadow-white/10 transform hover:scale-[1.02] flex items-center justify-center gap-2"
+                            >
+                                {loading === 'Pro' ? (
+                                    <>
+                                        <Loader2 className="w-5 h-5 animate-spin" />
+                                        Processing...
+                                    </>
+                                ) : (
+                                    <>
+                                        Get Pro Access
+                                    </>
+                                )}
+                            </button>
                         </div>
                     </div>
 
@@ -186,7 +301,7 @@ export default function PricingPage() {
                                 </li>
                             </ul>
 
-                            <Link href="mailto:sales@datagenie.ai" className="block w-full py-4 rounded-xl font-bold text-center border border-white/10 hover:bg-white/5 transition-all duration-300 text-white">
+                            <Link href="mailto:vinaysehwag14@gmail.com" className="block w-full py-4 rounded-xl font-bold text-center border border-white/10 hover:bg-white/5 transition-all duration-300 text-white">
                                 Contact Sales
                             </Link>
                         </div>

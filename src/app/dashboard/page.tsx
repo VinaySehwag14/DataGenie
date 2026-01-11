@@ -435,9 +435,19 @@ export default function DashboardPage() {
                                             </div>
 
                                             {error && (
-                                                <div className="bg-red-500/10 border border-red-500/20 text-red-400 px-6 py-4 rounded-xl flex items-center gap-3 animate-in shake">
-                                                    <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
-                                                    {error}
+                                                <div className="bg-red-500/10 border border-red-500/20 text-red-400 px-6 py-4 rounded-xl flex items-center justify-between gap-3 animate-in shake">
+                                                    <div className="flex items-center gap-3">
+                                                        <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
+                                                        {error}
+                                                    </div>
+                                                    {(error.includes('Free plan') || error.includes('upgrade')) && (
+                                                        <Link
+                                                            href="/pricing"
+                                                            className="px-4 py-2 bg-red-500/10 hover:bg-red-500/20 text-red-300 rounded-lg text-sm font-semibold transition-colors whitespace-nowrap"
+                                                        >
+                                                            View Plans →
+                                                        </Link>
+                                                    )}
                                                 </div>
                                             )}
                                         </div>
