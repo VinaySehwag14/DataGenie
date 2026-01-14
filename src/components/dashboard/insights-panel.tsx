@@ -76,15 +76,22 @@ export function InsightsPanel({ dataSourceId }: InsightsPanelProps) {
                     >
                         <div className="flex items-start justify-between mb-4">
                             <span className="text-2xl filter drop-shadow-md">{insight.icon}</span>
-                            {insight.value && (
-                                <span
-                                    className={`px-3 py-1 rounded-full text-white text-xs font-bold shadow-lg bg-gradient-to-r ${colorMap[insight.color] || colorMap.blue
-                                        } max-w-[150px] truncate`}
-                                    title={typeof insight.value === 'string' ? insight.value : insight.value?.toString()}
-                                >
-                                    {insight.value}
-                                </span>
-                            )}
+                            <div className="flex flex-col items-end gap-2">
+                                {insight.value && (
+                                    <span
+                                        className={`px-3 py-1 rounded-full text-white text-xs font-bold shadow-lg bg-gradient-to-r ${colorMap[insight.color] || colorMap.blue
+                                            } max-w-[150px] truncate`}
+                                        title={typeof insight.value === 'string' ? insight.value : insight.value?.toString()}
+                                    >
+                                        {insight.value}
+                                    </span>
+                                )}
+                                {insight.type === 'ai-insight' && (
+                                    <span className="px-2 py-0.5 rounded-full bg-indigo-500/20 border border-indigo-500/30 text-indigo-300 text-[10px] font-uppercase tracking-wider font-bold">
+                                        AI GENERATED
+                                    </span>
+                                )}
+                            </div>
                         </div>
 
                         <h3 className="font-bold text-white mb-2 group-hover:text-indigo-300 transition-colors">{insight.title}</h3>

@@ -2,12 +2,15 @@
 
 import { useState, useRef, useEffect } from 'react'
 import { Send, Loader2, Database, Sparkles, CreditCard } from 'lucide-react'
+import { IntentChartRenderer } from './intent-chart-renderer'
+import { AnalysisIntent } from '@/lib/ai/intent-types'
 
 interface Message {
     role: 'user' | 'assistant'
     content: string
     sql?: string
     data?: any[]
+    intent?: AnalysisIntent // Added intent type
     error?: boolean
 }
 
@@ -146,6 +149,16 @@ export function ChatInterface({ dataSourceId, dataSourceName }: ChatInterfacePro
                                 </div>
                             )}
 
+                            {/* Show Chart if Intent + Data available */}
+                            {message.intent && message.data && message.data.length > 0 && (
+                                <div className="mt-4 mb-2 h-[320px] bg-black/40 rounded-xl border border-white/5 p-4">
+                                    <IntentChartRenderer
+                                        intent={message.intent}
+                                        data={message.data}
+                                    />
+                                </div>
+                            )}
+
                             {/* Show SQL if available */}
                             {message.sql && (
                                 <details className="mt-3 text-sm group">
@@ -160,37 +173,42 @@ export function ChatInterface({ dataSourceId, dataSourceName }: ChatInterfacePro
 
                             {/* Show data table if available */}
                             {message.data && message.data.length > 0 && (
-                                <div className="mt-3 overflow-x-auto rounded-lg border border-white/10">
-                                    <table className="min-w-full text-sm">
-                                        <thead className="bg-white/5">
-                                            <tr>
-                                                {Object.keys(message.data[0]).map((key, i) => (
-                                                    <th key={i} className="px-3 py-2 text-left font-semibold text-gray-300 border-b border-white/10">
-                                                        {key}
-                                                    </th>
-                                                ))}
-                                            </tr>
-                                        </thead>
-                                        <tbody className="bg-black/20 divide-y divide-white/5">
-                                            {message.data.slice(0, 10).map((row, i) => (
-                                                <tr key={i} className="hover:bg-white/5 transition-colors">
-                                                    {Object.values(row).map((value: any, j) => (
-                                                        <td key={j} className="px-3 py-2 text-gray-300">
-                                                            {typeof value === 'number'
-                                                                ? value.toLocaleString()
-                                                                : value?.toString() || '—'}
-                                                        </td>
+                                <details className="mt-3 text-sm group">
+                                    <summary className="cursor-pointer text-indigo-300 hover:text-indigo-200 flex items-center gap-2">
+                                        <Database className="w-3 h-3" /> View Data Table
+                                    </summary>
+                                    <div className="mt-2 overflow-x-auto rounded-lg border border-white/10">
+                                        <table className="min-w-full text-sm">
+                                            <thead className="bg-white/5">
+                                                <tr>
+                                                    {Object.keys(message.data[0]).map((key, i) => (
+                                                        <th key={i} className="px-3 py-2 text-left font-semibold text-gray-300 border-b border-white/10">
+                                                            {key}
+                                                        </th>
                                                     ))}
                                                 </tr>
-                                            ))}
-                                        </tbody>
-                                    </table>
-                                    {message.data.length > 10 && (
-                                        <div className="px-3 py-2 bg-white/5 border-t border-white/10 text-xs text-gray-400">
-                                            +{message.data.length - 10} more rows
-                                        </div>
-                                    )}
-                                </div>
+                                            </thead>
+                                            <tbody className="bg-black/20 divide-y divide-white/5">
+                                                {message.data.slice(0, 10).map((row, i) => (
+                                                    <tr key={i} className="hover:bg-white/5 transition-colors">
+                                                        {Object.values(row).map((value: any, j) => (
+                                                            <td key={j} className="px-3 py-2 text-gray-300">
+                                                                {typeof value === 'number'
+                                                                    ? value.toLocaleString()
+                                                                    : value?.toString() || '—'}
+                                                            </td>
+                                                        ))}
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
+                                        {message.data.length > 10 && (
+                                            <div className="px-3 py-2 bg-white/5 border-t border-white/10 text-xs text-gray-400">
+                                                +{message.data.length - 10} more rows
+                                            </div>
+                                        )}
+                                    </div>
+                                </details>
                             )}
                         </div>
                     </div>

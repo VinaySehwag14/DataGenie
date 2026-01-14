@@ -133,3 +133,59 @@ export function generateStatisticalInsights(
 export function formatInsightsForAI(insights: Insight[]): string {
     return insights.map(i => `${i.title}: ${i.description} (${i.value})`).join('\n')
 }
+
+import { chatWithAI } from './gemini'
+
+export async function generateQualitativeInsights(
+    dataSummary: string,
+    sampleData: any[]
+): Promise<Insight[]> {
+    try {
+        const prompt = `
+        You are a senior data scientist. Analyze the following dataset summary and sample rows:
+
+        SUMMARY OF STATISTICS:
+        ${dataSummary}
+
+        SAMPLE DATA:
+        ${JSON.stringify(sampleData.slice(0, 5))}
+
+        TASK:
+        Generate 3 "deep" qualitative insights that go beyond simple sums. Look for:
+        - Outliers or anomalies
+        - Interesting relationships between columns
+        - Business opportunities or risks
+        - Trends if date columns exist
+
+        FORMAT:
+        Return ONLY a raw JSON array (no markdown, no backticks) with this structure:
+        [
+            {
+                "type": "trend" | "anomaly" | "opportunity",
+                "title": "Short, punchy title",
+                "description": "One clear sentence explaining the insight.",
+                "value": "Key metric if any (e.g. '+24%')",
+                "icon": "A relevant emoji",
+                "color": "indigo" | "pink" | "blue"
+            }
+        ]
+        `
+
+        const response = await chatWithAI([
+            { role: 'user', content: prompt }
+        ])
+
+        // Clean response
+        const cleaned = response.replace(/```json/g, '').replace(/```/g, '').trim()
+        const insights = JSON.parse(cleaned)
+
+        return insights.map((i: any) => ({
+            ...i,
+            type: 'ai-insight' // Tag them specifically
+        }))
+
+    } catch (error) {
+        console.error('AI Insight Generation Error:', error)
+        return [] // Fallback to empty if AI fails
+    }
+}

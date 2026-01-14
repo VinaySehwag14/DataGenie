@@ -2,7 +2,9 @@ import { createClient } from '@/lib/supabase/server'
 import { NextResponse } from 'next/server'
 import { chatWithAI } from '@/lib/ai/gemini'
 import { buildContextForAI } from '@/lib/ai/context-builder'
-import { executeSafeSQL, formatQueryResults } from '@/lib/ai/sql-executor'
+import { classifyIntent } from '@/lib/ai/intent-classifier'
+import { buildSqlFromIntent } from '@/lib/analytics/query-builder'
+import { DuckDBExecutor } from '@/lib/analytics/duckdb-executor'
 
 export async function POST(request: Request) {
     try {
@@ -64,7 +66,6 @@ export async function POST(request: Request) {
             }
 
             // Update usage (Optimistic update - we'll assume the query works)
-            // Ideally this should be done after success, but this is simpler for MVP
             const { error: updateError } = await supabase
                 .from('workspaces')
                 .update({
@@ -79,68 +80,90 @@ export async function POST(request: Request) {
         }
         // === RESTRICTION CHECK END ===
 
-        // Fetch sample data for context
-        const { data: sampleRows } = await supabase
+        // Fetch ALL data rows for this analysis
+        // Note: For MVP we fetch from Supabase -> Node Memory -> DuckDB.
+        // For production, we would stream this or load directly if it was a file URL.
+        const { data: allRows } = await supabase
             .from('data_rows')
             .select('row_data')
             .eq('data_source_id', dataSourceId)
-            .limit(5)
+            .limit(5000) // Safety limit for in-memory
 
-        const sampleData = sampleRows?.map(row => row.row_data) || []
+        const dataset = allRows?.map(row => row.row_data) || []
 
-        // Build AI context
-        const { contextPrompt } = buildContextForAI(dataSource, sampleData)
+        // Use existing helper to get schema info (using first 5 rows for sample)
+        const { columns, columnTypes } = buildContextForAI(dataSource, dataset.slice(0, 5))
 
-        // Prepare conversation for AI
-        const messages = [
-            { role: 'user', content: contextPrompt },
-            ...conversationHistory,
-            { role: 'user', content: `User question: "${message}"\n\nGenerate ONLY the SQL query, no explanation.` }
-        ]
+        // --- NEW DETERMINISTIC FLOW WITH DUCKDB ---
 
-        // Call Gemini AI to generate SQL
-        const aiResponse = await chatWithAI(messages)
+        // 1. Classify Intent
+        const intent = await classifyIntent(message, columns, columnTypes)
+        console.log("Determined Intent:", JSON.stringify(intent, null, 2))
 
-        // Extract SQL from response (AI might add markdown formatting)
-        let sql = aiResponse.trim()
-
-        // Remove markdown code blocks if present
-        sql = sql.replace(/```sql\n?/g, '').replace(/```\n?/g, '').trim()
-
-        // Log for debugging
-        console.log('Generated SQL:', sql)
-        console.log('For question:', message)
-
-        // Execute SQL safely
-        const queryResult = await executeSafeSQL(sql, dataSourceId, user.id)
-
-        if (!queryResult.success) {
+        if (intent.type === 'UNKNOWN') {
             return NextResponse.json({
                 role: 'assistant',
-                content: `I encountered an error executing the query: ${queryResult.error}`,
+                content: `I'm not sure how to analyze that. ${intent.reasoning || "Could you try asking differently?"}`,
+                error: false
+            })
+        }
+
+        // 2. Build Safe SQL (Standard Dialect)
+        let sql = ""
+        try {
+            // We use 'std' dialect for DuckDB, so columns are plain identifiers
+            sql = buildSqlFromIntent(intent, dataSourceId, 'std')
+            console.log("Generated DuckDB SQL:", sql)
+        } catch (builderError: any) {
+            return NextResponse.json({
+                role: 'assistant',
+                content: `I understood your intent (${intent.type}) but couldn't construct the query: ${builderError.message}`,
+                error: true
+            })
+        }
+
+        // 3. Execute with DuckDB
+        const duckDB = new DuckDBExecutor()
+        let queryResult: any[] = []
+
+        try {
+            // Load data into 'current_analysis' table
+            await duckDB.loadData('current_analysis', dataset)
+
+            // Execute
+            queryResult = await duckDB.executeQuery(sql)
+
+        } catch (execError: any) {
+            console.error("DuckDB Error:", execError)
+            return NextResponse.json({
+                role: 'assistant',
+                content: `Error executing analysis: ${execError.message}`,
                 error: true,
                 sql
             })
         }
 
-        // Format results for user
-        const formattedResult = formatQueryResults(queryResult.data)
-
-        // Generate natural language response
+        // 4. Trace & Explain
         const responseMessages = [
-            { role: 'user', content: contextPrompt },
-            { role: 'user', content: `Question: "${message}"\nSQL: ${sql}\nResult: ${JSON.stringify(queryResult.data)}\n\nExplain this result in a friendly, conversational way. Be concise (2-3 sentences max).` }
+            {
+                role: 'system', content: `You are a helpful data analyst. 
+            The user asked: "${message}".
+            
+            The analysis returned:
+            ${JSON.stringify(queryResult).slice(0, 1000)}
+            
+            Explain the result simply. Focus on the numbers. Do not mention "SQL".` },
         ]
 
-        const naturalResponse = await chatWithAI(responseMessages)
+        const naturalResponse = await chatWithAI(responseMessages as any)
 
         return NextResponse.json({
             role: 'assistant',
             content: naturalResponse,
             sql,
-            data: queryResult.data,
-            rowCount: queryResult.rowCount,
-            formattedResult
+            intent,
+            data: queryResult,
+            rowCount: queryResult.length
         })
 
     } catch (error: any) {
@@ -148,7 +171,7 @@ export async function POST(request: Request) {
         return NextResponse.json(
             {
                 role: 'assistant',
-                content: 'Sorry, I encountered an error processing your question. Please try rephrasing it.',
+                content: 'Sorry, I encountered an internal error. Please try again.',
                 error: true,
                 details: error.message
             },

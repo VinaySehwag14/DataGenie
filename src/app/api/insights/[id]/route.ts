@@ -1,7 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { NextResponse } from 'next/server'
 import { buildContextForAI } from '@/lib/ai/context-builder'
-import { generateStatisticalInsights } from '@/lib/ai/insights-generator'
+import { generateStatisticalInsights, formatInsightsForAI, generateQualitativeInsights } from '@/lib/ai/insights-generator'
 
 export async function GET(
     request: Request,
@@ -50,8 +50,16 @@ export async function GET(
         // Build context to get column types
         const { columns, columnTypes } = buildContextForAI(dataSource, data.slice(0, 10))
 
-        // Generate statistical insights
-        const insights = generateStatisticalInsights(data, columns, columnTypes)
+        // 1. Generate statistical insights (Fast)
+        const statsInsights = generateStatisticalInsights(data, columns, columnTypes)
+
+        // 2. Generate AI insights (Slow, but valuable)
+        // We act on sample data + the summary from stats
+        const dataSummary = formatInsightsForAI(statsInsights)
+        const aiInsights = await generateQualitativeInsights(dataSummary, data.slice(0, 10))
+
+        // Combine: Stats first, then AI
+        const insights = [...statsInsights, ...aiInsights]
 
         return NextResponse.json({ insights })
 
