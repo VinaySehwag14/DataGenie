@@ -109,12 +109,13 @@ export async function classifyIntent(
     7. If the user asks for a single number ("total count", "average price"), use AGGREGATE_METRIC.
     8. If the user asks to compare two periods (e.g. "sales this month vs last month", "YoY growth"), use COMPARE_METRIC.
     9. If the user asks for retention or cohorts (e.g. "user retention by month", "cohort analysis"), use COHORT_ANALYSIS.
-    10. If the request is ambiguous or impossible with these columns, return UNKNOWN.
+    10. If the user asks for a specific chart type (e.g. "bar chart of..."), map it to the most relevant intent (e.g. DISTRIBUTION or TOP_LIST).
+    11. If the request is ambiguous or impossible with these columns, return UNKNOWN.
     `;
 
     try {
         const { object } = await generateObject({
-            model: google('gemini-1.5-pro'),
+            model: google('gemini-1.5-flash'), // Switched to 1.5-flash for reliability
             schema: intentSchema,
             prompt: prompt,
             temperature: 0 // Deterministic
