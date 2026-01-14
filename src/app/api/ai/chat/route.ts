@@ -6,6 +6,8 @@ import { classifyIntent } from '@/lib/ai/intent-classifier'
 import { buildSqlFromIntent } from '@/lib/analytics/query-builder'
 import { DuckDBExecutor } from '@/lib/analytics/duckdb-executor'
 
+export const dynamic = 'force-dynamic';
+
 export async function POST(request: Request) {
     try {
         const supabase = await createClient()
